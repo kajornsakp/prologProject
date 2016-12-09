@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="28" height="33" tilewidth="16" tileheight="16" nextobjectid="809">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="28" height="33" tilewidth="16" tileheight="16" nextobjectid="849">
  <tileset firstgid="1" name="bg" tilewidth="16" tileheight="16" tilecount="1" columns="1">
   <image source="tile/bg.gif" width="16" height="16"/>
  </tileset>
@@ -1606,42 +1606,42 @@
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="98" type="wall" x="160" y="192" width="48" height="16">
+  <object id="98" type="wall" x="176" y="192" width="32" height="16">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="99" type="wall" x="160" y="208" width="16" height="64">
+  <object id="99" type="wall" x="160" y="192" width="16" height="80">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="100" type="wall" x="176" y="256" width="112" height="16">
+  <object id="100" type="wall" x="176" y="256" width="96" height="16">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="101" type="wall" x="272" y="192" width="16" height="64">
+  <object id="101" type="wall" x="272" y="192" width="16" height="80">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="105" type="wall" x="432" y="16" width="16" height="144">
+  <object id="105" type="wall" x="432" y="16" width="16" height="128">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="106" type="wall" x="0" y="16" width="16" height="144">
+  <object id="106" type="wall" x="0" y="16" width="16" height="128">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="107" type="wall" x="16" y="144" width="80" height="16">
+  <object id="107" type="wall" x="0" y="144" width="80" height="16">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="109" type="wall" x="80" y="160" width="16" height="64">
+  <object id="109" type="wall" x="80" y="144" width="16" height="80">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
@@ -1651,17 +1651,17 @@
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="111" type="wall" x="352" y="208" width="96" height="16">
+  <object id="111" type="wall" x="368" y="208" width="80" height="16">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="112" type="wall" x="352" y="144" width="16" height="64">
+  <object id="112" type="wall" x="352" y="144" width="16" height="80">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="113" type="wall" x="368" y="144" width="64" height="16">
+  <object id="113" type="wall" x="368" y="144" width="80" height="16">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
@@ -1681,27 +1681,27 @@
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="118" type="wall" x="432" y="320" width="16" height="176">
+  <object id="118" type="wall" x="432" y="320" width="16" height="160">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="119" type="wall" x="0" y="480" width="432" height="16">
+  <object id="119" type="wall" x="0" y="480" width="448" height="16">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="120" type="wall" x="0" y="304" width="16" height="176">
+  <object id="120" type="wall" x="0" y="320" width="16" height="160">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="121" type="wall" x="16" y="304" width="80" height="16">
+  <object id="121" type="wall" x="0" y="304" width="80" height="16">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
   </object>
-  <object id="122" type="wall" x="80" y="240" width="16" height="64">
+  <object id="122" type="wall" x="80" y="240" width="16" height="80">
    <properties>
     <property name="wall" value="wall"/>
    </properties>
@@ -1833,6 +1833,148 @@
   <object id="807" name="orangeghost" type="orangeghost" x="224" y="224" width="16" height="16">
    <properties>
     <property name="orangeghost" value="orangeghost"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="intersection">
+  <object id="821" x="96" y="80" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="822" x="192" y="80" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="823" x="240" y="80" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="824" x="336" y="80" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="825" x="336" y="128" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="826" x="336" y="224" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="827" x="288" y="224" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="828" x="240" y="176" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="829" x="192" y="176" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="830" x="144" y="80" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="831" x="288" y="80" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="832" x="336" y="16" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="833" x="96" y="16" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="834" x="96" y="128" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="835" x="96" y="224" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="836" x="96" y="320" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="837" x="96" y="368" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="838" x="192" y="464" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="839" x="240" y="464" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="840" x="240" y="368" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="841" x="192" y="368" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="842" x="336" y="368" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="843" x="336" y="320" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="844" x="288" y="272" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="845" x="144" y="272" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="846" x="16" y="80" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="847" x="416" y="80" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
+   </properties>
+  </object>
+  <object id="848" x="144" y="224" width="16" height="16">
+   <properties>
+    <property name="intersection" value="intersection"/>
    </properties>
   </object>
  </objectgroup>
