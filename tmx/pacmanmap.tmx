@@ -1815,22 +1815,22 @@
   </object>
  </objectgroup>
  <objectgroup name="ghost" visible="0">
-  <object id="804" name="redghost" type="redghost" x="208" y="192" width="16" height="16">
+  <object id="804" name="redghost" type="redghost" x="208" y="192" width="16" height="16" visible="0">
    <properties>
     <property name="redghost" value="redghost"/>
    </properties>
   </object>
-  <object id="805" name="blueghost" type="blueghost" x="192" y="224" width="16" height="16">
+  <object id="805" name="blueghost" type="blueghost" x="192" y="224" width="16" height="16" visible="0">
    <properties>
     <property name="blueghost" value="blueghost"/>
    </properties>
   </object>
-  <object id="806" name="pinkghost" type="pinkghost" x="208" y="224" width="16" height="16">
+  <object id="806" name="pinkghost" type="pinkghost" x="208" y="224" width="16" height="16" visible="0">
    <properties>
     <property name="pinkghost" value="pinkghost"/>
    </properties>
   </object>
-  <object id="807" name="orangeghost" type="orangeghost" x="224" y="224" width="16" height="16">
+  <object id="807" name="orangeghost" type="orangeghost" x="224" y="224" width="16" height="16" visible="0">
    <properties>
     <property name="orangeghost" value="orangeghost"/>
    </properties>

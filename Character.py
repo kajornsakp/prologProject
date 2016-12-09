@@ -149,6 +149,12 @@ class Ghost(pygame.sprite.Sprite):
                 self.kill()
                 print "eat ghost"
         new = self.rect
+        for intersection in game.tilemap.layers['intersection'].collide(new,'intersection'):
+            blockers = intersection['intersection']
+            print "ghost in intersect"
+            #intersection handle in here
+            #use intersection as a object (like wall)
+
         for cell in game.tilemap.layers['wall'].collide(new, 'wall'):
             blockers = cell['wall']
             if(blockers == ""):
