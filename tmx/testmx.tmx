@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="3" height="3" tilewidth="16" tileheight="16" nextobjectid="2">
+ <tileset firstgid="1" name="Screen Shot 2559-12-08 at 5.48.19 PM" tilewidth="16" tileheight="16" tilecount="1" columns="23">
+  <image source="../../Desktop/Screen Shot 2559-12-08 at 5.48.19 PM.png" width="370" height="370"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="3" height="3">
+  <data encoding="base64" compression="zlib">
+   eJy7yQABN/HQAFToBD4=
+  </data>
+ </layer>
+ <objectgroup name="player">
+  <object id="1" name="player" type="player" x="16" y="16" width="16" height="16">
+   <properties>
+    <property name="player" value="player"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>
