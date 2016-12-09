@@ -35,7 +35,7 @@
    eJzlVttOQjEQLILcTFAJCOEgCsr//6JLUpJxM9uz24Ni8GFehj2dMnvrPKX0HMSTYF/x3VIwFfSCaATbiu8eQG8neM0YEQ551LNi2Hmo18A9toTTvCdGc6i3FqwyNoTTvCdGc6j3G/Dkz8qllTNv/tj/xzzh70fBZyDe66dV91Ee/bwXDBSw7g/EF6sfPhSvzx0b98AeYb5Z9XlM32vfW0eoF5kjzQX1FtmTO4jrZ+4loMfmKvOtdN8piV8bZ0d6tU3PA11DWJ/Yvx493e/sbG/+hoY/J0wC+fur9emZnx69OfHH09eeOfCf3xNnv3AGdtnvOHtL+6jWK4/nJ723Fq9q9zvzfCZ4LHjVdb9rz9+Jnx5vu+x3Vp+4r6P7/UDOaXsvWfDUZ+m7a7w/2Xvpp2C9l24JX9FHKDY=
   </data>
  </layer>
- <objectgroup name="biscuit">
+ <objectgroup name="biscuit" visible="0">
   <object id="480" x="16" y="16" width="16" height="16">
    <properties>
     <property name="biscuit" value="biscuit"/>
@@ -1532,7 +1532,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup color="#000000" name="wall">
+ <objectgroup color="#000000" name="wall" visible="0">
   <properties>
    <property name="wall" value="wall"/>
   </properties>
@@ -1807,14 +1807,14 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="pacman">
+ <objectgroup name="pacman" visible="0">
   <object id="803" name="pacman" type="pacman" x="208" y="368" width="16" height="16">
    <properties>
     <property name="pacman" value="pacman"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="ghost">
+ <objectgroup name="ghost" visible="0">
   <object id="804" name="redghost" type="redghost" x="208" y="192" width="16" height="16">
    <properties>
     <property name="redghost" value="redghost"/>
@@ -1836,7 +1836,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="intersection">
+ <objectgroup name="intersection" visible="0">
   <object id="821" x="96" y="80" width="16" height="16">
    <properties>
     <property name="intersection" value="intersection"/>
