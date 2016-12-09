@@ -59,6 +59,11 @@ class ChangeModeEvent(Event):
     def __init__(self,mode):
         self.mode = mode
         self.name = "Change mode"
+
+class PacmanDieEvent(Event):
+    def __init__(self):
+        self.name = "Pacman die"
+
 class EventManager(object):
     """
     We coordinate communication between the Model, View, and Controller.

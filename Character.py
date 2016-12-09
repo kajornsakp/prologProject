@@ -1,6 +1,6 @@
 import pygame
 from PacmanConstant import *
-from eventmanager import ChangeModeEvent
+from eventmanager import ChangeModeEvent,PacmanDieEvent
 class Character(pygame.sprite.Sprite):
     def __init__(self,location,*group):
         super(Character,self).__init__(*group)
@@ -89,6 +89,7 @@ class Pacman(pygame.sprite.Sprite):
         return (cell.right-cell.left)/2+cell.left
     def getCenterY(self,cell):
         return (cell.bottom-cell.top)/2+cell.top
+
 class Ghost(pygame.sprite.Sprite):
     def __init__(self,location,direction,*group):
         super(Ghost,self).__init__(*group)
@@ -128,8 +129,11 @@ class Ghost(pygame.sprite.Sprite):
                 self.step = 0
             self.image = pygame.image.load(self.direction[self.step])
             if(self.rect.colliderect(game.pacman.rect)):
+                print "pacman die"
                 game.pacman.kill()
-                print "die"
+                game.evManager.Post(PacmanDieEvent())
+                game.pacman.rect.x = 0
+                game.pacman.rect.y = 0
 
         elif self.mode == GHOSTMODE.SCARE:
             self.rect.x = self.posx
@@ -139,6 +143,9 @@ class Ghost(pygame.sprite.Sprite):
                 self.step = 0
             self.image = pygame.image.load(self.direction[self.step])
             if (self.rect.colliderect(game.pacman.rect)):
+                if(self.direction == GHOSTSPRITE.RED):
+                    game.redghostDie()
+                    print "red ghost die"
                 self.kill()
                 print "eat ghost"
         new = self.rect
@@ -196,3 +203,35 @@ class Powerball(pygame.sprite.Sprite):
             print "eat powerball"
             game.evManager.Post(ChangeModeEvent(GHOSTMODE.SCARE))
             self.kill()
+
+class Laser(pygame.sprite.Sprite):
+
+    def __init__(self,location,direction,*group):
+        super(Laser,self).__init__(*group)
+        self.direction = direction
+        self.image = pygame.image.load(self.direction[0])
+        self.rect = pygame.rect.Rect(location,(16,16))
+        self.posx = location[0]
+        self.posy = location[1]
+        self.step = 0
+
+    def update(self,game):
+        self.rect.x = self.posx
+        self.rect.y = self.posy
+        if(self.direction == LASERSPRITE.UP):
+            self.posy -= 1
+        elif(self.direction == LASERSPRITE.DOWN):
+            self.posy += 1
+        elif(self.direction == LASERSPRITE.LEFT):
+            self.posx -= 1
+        elif(self.direction == LASERSPRITE.RIGHT):
+            self.posx += 1
+        self.image = pygame.image.load(self.direction[self.step])
+        self.step+=1
+        if(self.step == 3):
+            self.step = 2
+        if self.rect.colliderect(game.pacman.rect):
+            print "headshot"
+            game.pacman.kill()
+            self.kill()
+

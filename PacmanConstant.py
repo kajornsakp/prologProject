@@ -55,5 +55,14 @@ GHOSTSPRITE = enum(RED=["sprite/ghost-red-1.gif","sprite/ghost-red-2.gif",
                         "sprite/ghost-orange-3.gif", "sprite/ghost-orange-4.gif",
                         "sprite/ghost-orange-5.gif", "sprite/ghost-orange-6.gif"])
 
+LASERSPRITE = enum(LEFT=["sprite/laser-l-1.gif","sprite/laser-l-2.gif",
+                         "sprite/laser-l-3.gif"],
+                   RIGHT=["sprite/laser-r-1.gif","sprite/laser-r-2.gif",
+                         "sprite/laser-r-3.gif"],
+                   UP=["sprite/laser-u-1.gif", "sprite/laser-u-2.gif",
+                          "sprite/laser-u-3.gif"],
+                   DOWN=["sprite/laser-d-1.gif", "sprite/laser-d-2.gif",
+                          "sprite/laser-d-3.gif"])
+
 GHOSTMODE = enum(SCARE=0,CHASE=1)
 GHOSTDIRECTION = enum(UP=0,DOWN=1,LEFT=2,RIGHT=3)

@@ -1,6 +1,6 @@
 import pygame
 
-from Character import Pacman,Ghost,Biscuit,Powerball
+from Character import *
 from Map import Map
 from PacmanConstant import *
 from eventmanager import *
@@ -31,21 +31,23 @@ class GraphicalView(object):
         self.direction = PACMANDIRECTION.LEFT
         self.screenMode = SCREENMODE.MENU
         self.movespeed = 1
+        self.life = 3
+
 
 
     def initPacman(self):
-        pacmanSprite = tmx.SpriteLayer()
+        self.pacmanSprite = tmx.SpriteLayer()
         pacmantmx = self.tilemap.layers['pacman'].find('pacman')[0]
-        self.pacman = Pacman((pacmantmx.px,pacmantmx.py),self.direction,pacmanSprite)
+        self.pacman = Pacman((pacmantmx.px,pacmantmx.py),self.direction,self.pacmanSprite)
         self.pacman.movespeed = self.movespeed
-        self.tilemap.layers.append(pacmanSprite)
+        self.tilemap.layers.append(self.pacmanSprite)
         self.tilemap.set_focus(1,1)
 
     def initGhost(self):
-        redghostSprite = tmx.SpriteLayer()
+        self.redghostSprite = tmx.SpriteLayer()
         redghostTmx = self.tilemap.layers['ghost'].find('redghost')[0]
-        self.redghost = Ghost((redghostTmx.px, redghostTmx.py),GHOSTSPRITE.RED,redghostSprite)
-        self.tilemap.layers.append(redghostSprite)
+        self.redghost = Ghost((redghostTmx.px, redghostTmx.py),GHOSTSPRITE.RED,self.redghostSprite)
+        self.tilemap.layers.append(self.redghostSprite)
 
         pinkghostSprite = tmx.SpriteLayer()
         pinkghostTmx = self.tilemap.layers['ghost'].find('pinkghost')[0]
@@ -89,6 +91,8 @@ class GraphicalView(object):
             pygame.quit()
         elif isinstance(event,ChangeModeEvent):
             self.changeMode(event)
+        elif isinstance(event,PacmanDieEvent):
+            self.pacmanDie()
         elif isinstance(event, TickEvent):
             self.renderall()
             self.pacman.updatePosition()
@@ -160,6 +164,11 @@ class GraphicalView(object):
         self.pacman.updateDirection(self.direction)
 
 
+    def redghostDie(self):
+        a = Laser((self.redghost.posx,self.redghost.posy),LASERSPRITE.LEFT,self.redghostSprite)
+        b = Laser((self.redghost.posx,self.redghost.posy),LASERSPRITE.RIGHT, self.redghostSprite)
+        c = Laser((self.redghost.posx,self.redghost.posy), LASERSPRITE.UP, self.redghostSprite)
+        d = Laser((self.redghost.posx,self.redghost.posy), LASERSPRITE.DOWN, self.redghostSprite)
 
 
     def updateGhostPosition(self):
@@ -172,8 +181,9 @@ class GraphicalView(object):
     def checkLimit(self):
         print self.pacman.rect
 
-
-
-
+    def pacmanDie(self):
+        self.life -= 1
+        self.pacman.rect.x = 0
+        self.pacman.rect.y = 0
 
 
