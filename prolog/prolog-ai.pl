@@ -308,8 +308,10 @@ adj((X,Y),(NX,Y)) :-
     NX is X + 1.
 
 adj((X,Y),(NX,Y)) :-
-    Y > 1,
+    X > 1,
     NX is X - 1.
+
+adj((X,Y),(NX,NY)):- wrap(X,Y,NX,NY), write("heyyy").
 
 %find distance param(Point1,Point2, output)
 h((X,Y),(X2,Y2),D) :-
