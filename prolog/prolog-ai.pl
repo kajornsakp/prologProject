@@ -47,7 +47,7 @@ grid(
 	[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
 	[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]).
 
-
+pacman(14,24,normal).
 powerBall(2,4).
 powerBall(27,4).
 powerBall(2,14).
@@ -60,7 +60,7 @@ ghost(14,12,blue,chase).
 ghostPrev(14,13,blue).
 ghost(14,12,orange,chase).
 ghostPrev(14,13,orange).
-pacman(14,24,normal).
+
 
 %up (currentPosition, possibleMove1, possibleMove1, output).
 priority((OldX,OldY),(X,Y),(W,Z),(OldX,Ny)):- Ny is OldY - 1, X == OldX, Y == Ny.
@@ -75,9 +75,6 @@ priority((OldX,OldY),(X,Y),(W,Z),(OldX,Ny)):- Ny is OldY + 1, W == OldX, Z == Ny
 priority((OldX,OldY),(X,Y),(W,Z),(Nx,OldY)):- Nx is OldX + 1, X == Nx, Y == OldY.
 priority((OldX,OldY),(X,Y),(W,Z),(Nx,OldY)):- Nx is OldX + 1, W == Nx, Z == OldY.
 
-start:-
-  new_world.
-
 restart:-
   reconsult('/Users/patricksuphalawut/Documents/Project/Third_year_1s/ai/prolog-ai.pl'),
   start.
@@ -86,15 +83,6 @@ reset:-
   resetPacman,
   resetGhost.
 
-
-new_world:-
-  grid([Row|Rest]),
-  length([Row|Rest], H),
-  retract(height(_)),
-  assert(height(H)),
-  length(Row,W),
-  retract(width(_)),
-  assert(width(W)).
 
 width(28).
 height(31).
@@ -150,12 +138,14 @@ getGhostPrev(Type,X,Y):-
 
 %move pacman to new position
 movePacman(X,Y):-
+    write("cs1"),
     \+ghost(X,Y,_,scare),
     pacman(_,_,normal),
     fail.
 
 
 movePacman(X,Y):-
+  write("sc1"),
   ghost(X,Y,T,scare),
   validatePos(X,Y),
   retract(pacman(_,_,Type)),
@@ -163,15 +153,19 @@ movePacman(X,Y):-
   eatGhost.
 
 movePacman(X,Y):-
+  write("wp1"),
   wrap(X,Y,NX,NY),
   validatePos(NX,NY),
   retract(pacman(_,_,Type)),
-  assert(pacman(NX,NY,Type)).
+  assert(pacman(NX,NY,Type)),write("aslkfjkl"),nl.
 
 movePacman(X,Y):-
+  write("m"),
   validatePos(X,Y),
+  write("v"),
   retract(pacman(_,_,Type)),
-    assert(pacman(X,Y,Type)).
+  write("r"),
+  assert(pacman(X,Y,Type)),write("a"),nl.
 
 changeGhostMode(Type,Mode):-
   retract(ghost(X,Y,Type,_)),
@@ -255,8 +249,10 @@ moveGhost(X,Y,Type,Mode):-
 %ghost target X point. param(currentPosition,nextposition,goalposition,typeofghost).
 targetGhost(CurrPoint,(NextX,NextY),Goal,Type):-
   ghostPrev(Xprev,Yprev,Type),
-  astar(CurrPoint,[],Goal,[(Xprev,Yprev),(14,13),(15,13)],[(X1,Y1),(NextX,NextY)|T],1,Temp,TotalCost).
-  %% turnBase(CurrPoint,Goal,Type,(NextX,NextY)).
+  write("Goal: "),write(Goal),nl,
+  astar(CurrPoint,[],Goal,[(Xprev,Yprev),(14,13),(15,13)],[(X1,Y1),(NextX,NextY)|T],1,Temp,TotalCost),
+  ghostPrev(Xp,Yp,Type).
+  %%turnBase(CurrPoint,Goal,Type,(NextX,NextY)).
 
 %orange ghost behaviour param(CurrentPosition,outputPosition).
 orangeGhost(CurrPoint,NextMove):-

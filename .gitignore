@@ -1,0 +1,12 @@
+Character.pyc
+controller.pyc
+eventmanager.pyc
+Map.pyc
+model.pyc
+PacmanConstant.pyc
+PrologController.pyc
+view.pyc
+.idea/workspace.xml
+tmx/__init__.pyc
+tmx/tmx.pyc
+*.xml
