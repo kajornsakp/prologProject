@@ -95,9 +95,6 @@ class GraphicalView(object):
             self.initialize()
         elif isinstance(event,InputEvent):
             self.updateDirection(event.char)
-        elif isinstance(event,ClockEvent):
-            self.timerSec -= 1
-            self.countDown(self.fn)
         elif isinstance(event, QuitEvent):
             self.isinitialized = False
             pygame.quit()
@@ -106,6 +103,8 @@ class GraphicalView(object):
         elif isinstance(event,PacmanDieEvent):
             self.pacmanDie()
         elif isinstance(event, TickEvent):
+            if(self.isTimerInit):
+                self.countDown(self.fn)
             self.count += 1
             if(self.count == 16):
                 self.pacman.updateDirection(self.direction)
@@ -117,11 +116,13 @@ class GraphicalView(object):
 
     def changeMode(self,event):
         if event.mode == GHOSTMODE.CHASE:
+            self.pacman.mode = GHOSTMODE.CHASE
             self.redghost.mode = GHOSTMODE.CHASE
             self.blueghost.mode = GHOSTMODE.CHASE
             self.pinkghost.mode = GHOSTMODE.CHASE
             self.orangeghost.mode = GHOSTMODE.CHASE
         elif event.mode == GHOSTMODE.SCARE:
+            self.pacman.mode = GHOSTMODE.SCARE
             self.redghost.mode = GHOSTMODE.SCARE
             self.blueghost.mode = GHOSTMODE.SCARE
             self.pinkghost.mode = GHOSTMODE.SCARE
@@ -177,7 +178,7 @@ class GraphicalView(object):
     def redghostDie(self):
         posx = self.redghost.posx
         posy = self.redghost.posy
-        self.createTimer(6,lambda : self.fireLaser(posx,posy))
+        self.createTimer(64,lambda : self.fireLaser(posx,posy))
 
 
     def blueghostDie(self):
@@ -185,7 +186,7 @@ class GraphicalView(object):
 
     def pinkghostDie(self):
         self.createTrap(self.pinkghost.posx,self.pinkghost.posy)
-        self.createTimer(3,lambda : self.releaseTrap())
+        self.createTimer(48,lambda : self.releaseTrap())
 
     def orangeghostDie(self):
         self.blindPacman()
@@ -205,7 +206,6 @@ class GraphicalView(object):
         self.blueghost.updatePosition(prolog, pacman)
         self.pinkghost.updatePosition(prolog, pacman)
         self.orangeghost.updatePosition(prolog, pacman)
-
 
 
     def pacmanDie(self):
@@ -232,15 +232,12 @@ class GraphicalView(object):
         if(self.isTimerInit == True):
             return
         print "create timer"
-        pygame.time.set_timer(pygame.USEREVENT,1000)
-        self.tick = pygame.time.get_ticks()
         self.timerSec = time
         self.fn = fn
         self.isTimerInit = True
 
     def countDown(self,fn):
-        sec = (pygame.time.get_ticks() - self.tick) / 1000
-        self.timerSec -= sec
+        self.timerSec -= 1
         if(self.timerSec == 1):
             self.isTimerInit = False
             self.callAction(fn)

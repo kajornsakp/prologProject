@@ -35,6 +35,8 @@ class Pacman(pygame.sprite.Sprite):
         self.movespeed = 0
         self.c = 0
         self.isTrap = False
+        self.mode = GHOSTMODE.CHASE
+        self.imageSet = None
 
 
     def draw(self,screen):
@@ -47,13 +49,23 @@ class Pacman(pygame.sprite.Sprite):
 
     def update(self,game):
         self.rect = pygame.rect.Rect((self.posx,self.posy),(16,16))
-        # self.rect.x = self.posx
-        # self.rect.y = self.posy
+        if(self.mode == GHOSTMODE.CHASE):
+            self.imageSet = self.direction
+        else:
+            if self.direction == PACMANDIRECTION.RIGHT:
+                self.imageSet = REDPACMANDIRECTION.RIGHT
+            elif self.direction == PACMANDIRECTION.LEFT:
+                self.imageSet = REDPACMANDIRECTION.LEFT
+            elif self.direction == PACMANDIRECTION.UP:
+                self.imageSet = REDPACMANDIRECTION.UP
+            elif self.direction == PACMANDIRECTION.DOWN:
+                self.imageSet = REDPACMANDIRECTION.DOWN
+
         last = self.rect.copy()
         self.step += 1
         if(self.step == 8):
             self.step = 0
-        self.image = pygame.image.load(self.direction[self.step])
+        self.image = pygame.image.load(self.imageSet[self.step])
         new = self.rect
 
         for cell in game.tilemap.layers['wall'].collide(new, 'wall'):
@@ -296,7 +308,7 @@ class Biscuit(pygame.sprite.Sprite):
 
     def __init__(self,location,*groups):
         super(Biscuit,self).__init__(*groups)
-        self.image = pygame.image.load('sprite/biscuit.gif')
+        self.image = pygame.image.load('sprite/biscuit.png')
         self.rect = pygame.rect.Rect(location,(15,15))
 
     def update(self,game):
@@ -308,7 +320,7 @@ class Powerball(pygame.sprite.Sprite):
 
     def __init__(self,location,*groups):
         super(Powerball,self).__init__(*groups)
-        self.image = pygame.image.load('sprite/powerball.gif')
+        self.image = pygame.image.load('sprite/powerball.png')
         self.rect = pygame.rect.Rect(location,(15,15))
 
     def update(self,game):
@@ -331,14 +343,15 @@ class Laser(pygame.sprite.Sprite):
     def update(self,game):
         self.rect.x = self.posx
         self.rect.y = self.posy
+        #TODO: add speed
         if(self.direction == LASERSPRITE.UP):
-            self.posy -= 1
+            self.posy -= 1.075
         elif(self.direction == LASERSPRITE.DOWN):
-            self.posy += 1
+            self.posy += 1.075
         elif(self.direction == LASERSPRITE.LEFT):
-            self.posx -= 1
+            self.posx -= 1.075
         elif(self.direction == LASERSPRITE.RIGHT):
-            self.posx += 1
+            self.posx += 1.075
         self.image = pygame.image.load(self.direction[self.step])
         self.step+=1
         if(self.step == 3):
