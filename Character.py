@@ -32,20 +32,26 @@ class Pacman(pygame.sprite.Sprite):
         self.image = pygame.image.load(self.direction[0])
         self.rect = pygame.rect.Rect(location,(18,18))
         self.step = 0
-        self.movespeed = 0
+        self.velx = -1
+        self.vely = 0
         self.c = 0
         self.isTrap = False
         self.mode = GHOSTMODE.CHASE
         self.imageSet = None
+        self.future = direction
+        self.walkable = True
+
 
 
     def draw(self,screen):
         screen.blit(self.image,self.rect)
 
     def updateDirection(self,direction):
-        self.direction = direction
+        self.future = direction
         self.step = 0
-        self.movespeed = 1
+        if (self.walkable):
+            self.direction = direction
+        self.checkDirection()
 
     def update(self,game):
         self.rect = pygame.rect.Rect((self.posx,self.posy),(16,16))
@@ -74,20 +80,20 @@ class Pacman(pygame.sprite.Sprite):
                 return
             if(self.direction == PACMANDIRECTION.UP):
                 if(new.centerx < cell.right and new.centerx > cell.left and self.getCenterY(cell) < new.centery):
-                    self.movespeed = 0
+                    self.vely = 0
 
             elif(self.direction == PACMANDIRECTION.DOWN):
                 if(new.centerx < cell.right and new.centerx > cell.left and self.getCenterY(cell) > new.centery):
-                    self.movespeed = 0
-
+                    self.vely = 0
 
             elif(self.direction == PACMANDIRECTION.LEFT):
                 if(new.centery > cell.top and new.centery < cell.bottom and new.centerx > self.getCenterX(cell)):
-                    self.movespeed = 0
+                    self.velx = 0
 
             elif(self.direction == PACMANDIRECTION.RIGHT):
                 if (new.centery > cell.top and new.centery < cell.bottom and new.centerx < self.getCenterX(cell)):
-                    self.movespeed = 0
+                    self.velx = 0
+
         if (new.centerx > 440 and self.direction == PACMANDIRECTION.RIGHT):
             self.posx = 8
             game.count = 8
@@ -97,18 +103,45 @@ class Pacman(pygame.sprite.Sprite):
 
         game.tilemap.set_focus(new.x,new.y)
 
-    def updatePosition(self, prolog):
+    def checkDirection(self):
         if self.direction == PACMANDIRECTION.RIGHT:
-            self.posx += self.movespeed
+            self.velx = 1
+            self.vely = 0
 
         elif self.direction == PACMANDIRECTION.LEFT:
-            self.posx -= self.movespeed
+            self.velx = -1
+            self.vely = 0
 
         elif self.direction == PACMANDIRECTION.UP:
-            self.posy -= self.movespeed
+            self.velx = 0
+            self.vely = -1
 
         elif self.direction == PACMANDIRECTION.DOWN:
-            self.posy += self.movespeed
+            self.velx = 0
+            self.vely = 1
+
+    def setSpeed(self, n):
+        if self.direction == PACMANDIRECTION.RIGHT:
+            self.velx = n
+            self.vely = 0
+
+        elif self.direction == PACMANDIRECTION.LEFT:
+            self.velx = n*(-1)
+            self.vely = 0
+
+        elif self.direction == PACMANDIRECTION.UP:
+            self.velx = 0
+            self.vely = n*(-1)
+
+        elif self.direction == PACMANDIRECTION.DOWN:
+            self.velx = 0
+            self.vely = n
+
+
+    def updatePosition(self, prolog):
+        self.posx += self.velx
+        self.posy += self.vely
+
         if self.posx % 16 == 0 or self.posy % 16 == 0:
             x = math.floor(self.posx / 16)
             y = math.floor(self.posy / 16)
@@ -122,6 +155,7 @@ class Pacman(pygame.sprite.Sprite):
 
     def getCenterX(self,cell):
         return (cell.right-cell.left)/2+cell.left
+
     def getCenterY(self,cell):
         return (cell.bottom-cell.top)/2+cell.top
 
@@ -172,15 +206,10 @@ class Ghost(pygame.sprite.Sprite):
                     self.prevx = x1
                     self.prevy = 1
                     direction = 0
-                    if self.direction == GHOSTSPRITE.RED or self.direction == GHOSTSPRITE.ORANGE:
-                        direction = prolog.moveGhost(x, y, self.direction)
+                    if self.direction == GHOSTSPRITE.LIGHTBLUE:
+                        direction = self.getBlueDirection(x, y, game.pacman, prolog)
                     else:
-                        if self.direction == GHOSTSPRITE.LIGHTBLUE:
-                            # print("+++++++++++++++++++++++++++++++++++++")
-                            direction = self.getBlueDirection(x, y, game.pacman, prolog)
-
-                        else:
-                            direction = self.getPinkDirection(x, y, game.redghost, prolog)
+                        direction = prolog.moveGhost(x, y, self.direction)
                     # print direction
                     if direction == 100:
                         self.updateDirection(self.ghostdirection)
@@ -410,7 +439,7 @@ class Water(pygame.sprite.Sprite):
             self.step = 6
 
         if self.rect.colliderect(game.pacman.rect):
-            game.pacman.movespeed = 0.5
+            game.pacman.setSpeed(0.5)
 
 class Blind(pygame.sprite.Sprite):
 
@@ -435,6 +464,7 @@ class Trap(pygame.sprite.Sprite):
     def update(self,game):
         if(self.rect.colliderect(game.pacman.rect)):
             if(game.pacman.isTrap == True):
-                game.pacman.movespeed = 0
+                game.pacman.vely = 0
+                game.pacman.velx = 0
             else:
-                game.pacman.movespeed = 1
+                game.pacman.checkDirection()

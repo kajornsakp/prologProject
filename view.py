@@ -2,11 +2,11 @@ import pygame
 
 from Character import *
 from Map import Map
-from PrologController import PrologController
 from PacmanConstant import *
 from eventmanager import *
 import tmx.tmx as tmx
 from PrologController import PrologController
+import math
 
 
 
@@ -32,6 +32,7 @@ class GraphicalView(object):
         self.clock = None
         self.smallfont = None
         self.direction = PACMANDIRECTION.LEFT
+        self.futureDirection = PACMANDIRECTION.LEFT
         self.movespeed = 1
         self.prolog = PrologController()
         self.life = 3
@@ -42,6 +43,7 @@ class GraphicalView(object):
         self.isTimerInit = False
         self.fn = None
         self.tick = None
+        self.moveable = True
 
 
     def initPacman(self):
@@ -107,6 +109,10 @@ class GraphicalView(object):
                 self.countDown(self.fn)
             self.count += 1
             if(self.count == 16):
+                x, y = self.checkValidInput(int(math.floor(self.pacman.posx/16)) + 1, int(math.floor(self.pacman.posy / 16)) + 1)
+                moveable = list(self.prolog.p.query('movePacman('+str(x)+','+str(y)+')'))
+                if len(moveable) != 0:
+                    self.direction = self.futureDirection
                 self.pacman.updateDirection(self.direction)
                 self.count = 0
             self.renderall()
@@ -168,13 +174,29 @@ class GraphicalView(object):
 
     def updateDirection(self,char):
         if char == 'R':
-            self.direction = PACMANDIRECTION.RIGHT
+            self.futureDirection = PACMANDIRECTION.RIGHT
         elif char == 'L':
-            self.direction = PACMANDIRECTION.LEFT
+            self.futureDirection = PACMANDIRECTION.LEFT
         elif char == 'W':
-            self.direction = PACMANDIRECTION.UP
+            self.futureDirection = PACMANDIRECTION.UP
         elif char == 'D':
-            self.direction = PACMANDIRECTION.DOWN
+            self.futureDirection = PACMANDIRECTION.DOWN
+
+
+
+    def checkValidInput(self, x, y):
+        if self.futureDirection == PACMANDIRECTION.RIGHT:
+            return x+1, y
+
+        elif self.futureDirection == PACMANDIRECTION.LEFT:
+            return x - 1, y
+
+        elif self.futureDirection == PACMANDIRECTION.UP:
+            return x, y - 1
+
+        elif self.futureDirection == PACMANDIRECTION.DOWN:
+            return x, y + 1
+
     def redghostDie(self):
         posx = self.redghost.posx
         posy = self.redghost.posy
@@ -203,9 +225,9 @@ class GraphicalView(object):
 
     def updateGhostPosition(self, prolog,pacman):
 
-        # self.redghost.updatePosition(prolog, self)
-        self.blueghost.updatePosition(prolog, self)
-        # self.pinkghost.updatePosition(prolog, self)
+        self.redghost.updatePosition(prolog, self)
+        # self.blueghost.updatePosition(prolog, self)
+        self.pinkghost.updatePosition(prolog, self)
         # self.orangeghost.updatePosition(prolog, self)
 
 

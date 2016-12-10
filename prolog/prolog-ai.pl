@@ -1,5 +1,5 @@
 %dynamic rule
-:-use_module(library(lists)). 
+:-use_module(library(lists)).
 :-abolish(height/1).
 :-abolish(width/1).
 :-abolish(pacman/3).
@@ -212,7 +212,21 @@ moveGhost(Type,Goal):-
 
 %blue and pink ghost
 moveGhost(Type,Goal):-
-  ghost(X,Y, Type, chase),
+  Type == blue
+  ghost(X,Y, blue, chase),
+  targetGhost((X,Y),(NewX,NewY),Goal,Type),!,
+  moveGhost(NewX,NewY,Type,chase).
+
+moveGhost(Type,(Px,Py)):-
+  Type == pink,
+  ghost(X1,Y1,red,_),
+  GoalX is Px + (X1 - Px),
+  GoalY is Py + (Y1 - Py),
+  write("rx:"),write(X1), write(" |  ry:"), write(Y1),nl,
+  write("px:"),write(Px), write(" |  py:"), write(Py),nl,
+  write("x:"),write(GoalX), write(" |  y:"), write(GoalY),nl,
+  getPinkGoal((Px,Py),GoalX, GoalY,Goal),
+  ghost(X,Y, pink, chase),
   targetGhost((X,Y),(NewX,NewY),Goal,Type),!,
   moveGhost(NewX,NewY,Type,chase).
 
@@ -244,6 +258,24 @@ moveGhost(X,Y,Type,Mode):-
   assert(ghost(X,Y,Type,Mode)),
   assert(ghostPrev(W,Z,Type)),!,
   \+alive.
+
+getPinkGoal(Pac,X,Y,(2,Y)):-
+	X < 1, Y > 1, Y < 31.
+
+getPinkGoal(Pac,X,Y,(28,Y)):-
+	X > 28, Y > 1, Y < 31.
+
+getPinkGoal(Pac,X,Y,(X,2)):-
+	Y < 1, X > 1, X < 28.
+
+getPinkGoal(Pac,X,Y,(X,30)):-
+	Y > 31, X > 1, X < 28.
+
+getPinkGoal(Pac,X,Y,(X,Y)):-
+	Y > 1, Y < 31, X > 1, X < 28.
+
+getPinkGoal(Pac,X,Y,Pac).
+
 
 
 %ghost target X point. param(currentPosition,nextposition,goalposition,typeofghost).
