@@ -213,6 +213,9 @@ class Ghost(pygame.sprite.Sprite):
                     game.blueghostDie()
                 print "eat ghost"
         new = self.rect
+        for intersection in game.tilemap.layers['intersection'].collide(new,'intersection'):
+            print "intersect block: ",intersection
+            #code here
         for cell in game.tilemap.layers['wall'].collide(new, 'wall'):
             blockers = cell['wall']
             if(blockers == ""):
@@ -323,8 +326,8 @@ class Blind(pygame.sprite.Sprite):
     def __init__(self,location,*group):
         super(Blind,self).__init__(*group)
         self.image = pygame.image.load(BLINDSPRITE)
-        self.rect = pygame.rect.Rect(location,(1000,1000))
+        self.rect = pygame.rect.Rect(location,(500,500))
 
     def update(self,game):
-        self.rect.x = game.pacman.posx
-        self.rect.y = game.pacman.posy
+        self.rect.x = game.pacman.posx-250
+        self.rect.y = game.pacman.posy+250
