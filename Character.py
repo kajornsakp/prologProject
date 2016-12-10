@@ -1,5 +1,6 @@
 import pygame
 from PacmanConstant import *
+import math
 from eventmanager import ChangeModeEvent,PacmanDieEvent
 class Character(pygame.sprite.Sprite):
     def __init__(self,location,*group):
@@ -43,8 +44,9 @@ class Pacman(pygame.sprite.Sprite):
         self.movespeed = 1
 
     def update(self,game):
-        self.rect.x = self.posx
-        self.rect.y = self.posy
+        self.rect = pygame.rect.Rect((self.posx,self.posy),(16,16))
+        # self.rect.x = self.posx
+        # self.rect.y = self.posy
         last = self.rect.copy()
         self.step += 1
         if(self.step == 8):
@@ -198,6 +200,11 @@ class Ghost(pygame.sprite.Sprite):
             self.image = pygame.image.load(self.direction[self.step])
             if (self.rect.colliderect(game.pacman.rect)):
                 self.kill()
+                if(self.direction == GHOSTSPRITE.RED):
+                    print "redghostdie"
+                    game.redghostDie()
+                elif(self.direction == GHOSTSPRITE.LIGHTBLUE):
+                    game.blueghostDie()
                 print "eat ghost"
         new = self.rect
         for cell in game.tilemap.layers['wall'].collide(new, 'wall'):
@@ -283,20 +290,35 @@ class Laser(pygame.sprite.Sprite):
             self.step = 2
         if self.rect.colliderect(game.pacman.rect):
             print "headshot"
-            game.pacman.kill()
+            #game.pacman.kill()
             self.kill()
 
 
 class Water(pygame.sprite.Sprite):
 
     def __init__(self,location,*group):
+        super(Water,self).__init__(*group)
         self.direction = WATERSPRITE.WATER
         self.image = pygame.image.load(self.direction[0])
-        self.rect = pygame.rect.Rect(location,(16,16))
+        self.rect = pygame.rect.Rect(location,(15,15))
         self.step = 0
 
     def update(self,game):
         self.image = pygame.image.load(self.direction[self.step])
         self.step += 1
-        if (self.step == 8):
-            self.step = 7
+        if (self.step == 7):
+            self.step = 6
+
+        if self.rect.colliderect(game.pacman.rect):
+            game.pacman.movespeed = 0.5
+
+class Blind(pygame.sprite.Sprite):
+
+    def __init__(self,location,*group):
+        super(Blind,self).__init__(*group)
+        self.image = pygame.image.load(BLINDSPRITE)
+        self.rect = pygame.rect.Rect(location,(1000,1000))
+
+    def update(self,game):
+        self.rect.x = game.pacman.posx
+        self.rect.y = game.pacman.posy

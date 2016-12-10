@@ -2,6 +2,7 @@ import pygame
 
 from Character import *
 from Map import Map
+from PrologController import PrologController
 from PacmanConstant import *
 from eventmanager import *
 import tmx.tmx as tmx
@@ -34,6 +35,8 @@ class GraphicalView(object):
         self.prolog = PrologController()
         self.prolog.start()
         self.life = 3
+        self.isBlind = False
+        self.count = 0
 
 
 
@@ -51,33 +54,33 @@ class GraphicalView(object):
         self.redghost = Ghost((redghostTmx.px, redghostTmx.py),GHOSTSPRITE.RED,self.redghostSprite)
         self.tilemap.layers.append(self.redghostSprite)
 
-        pinkghostSprite = tmx.SpriteLayer()
+        self.pinkghostSprite = tmx.SpriteLayer()
         pinkghostTmx = self.tilemap.layers['ghost'].find('pinkghost')[0]
-        self.pinkghost = Ghost((pinkghostTmx.px,pinkghostTmx.py), GHOSTSPRITE.PINK,pinkghostSprite)
-        self.tilemap.layers.append(pinkghostSprite)
+        self.pinkghost = Ghost((pinkghostTmx.px,pinkghostTmx.py), GHOSTSPRITE.PINK,self.pinkghostSprite)
+        self.tilemap.layers.append(self.pinkghostSprite)
 
-        blueghostSprite = tmx.SpriteLayer()
+        self.blueghostSprite = tmx.SpriteLayer()
         blueghostTmx = self.tilemap.layers['ghost'].find('blueghost')[0]
-        self.blueghost = Ghost((blueghostTmx.px, blueghostTmx.py), GHOSTSPRITE.LIGHTBLUE, blueghostSprite)
-        self.tilemap.layers.append(blueghostSprite)
+        self.blueghost = Ghost((blueghostTmx.px, blueghostTmx.py), GHOSTSPRITE.LIGHTBLUE, self.blueghostSprite)
+        self.tilemap.layers.append(self.blueghostSprite)
 
-        orangeghostSprite = tmx.SpriteLayer()
+        self.orangeghostSprite = tmx.SpriteLayer()
         orangeghostTmx = self.tilemap.layers['ghost'].find('orangeghost')[0]
-        self.orangeghost = Ghost((orangeghostTmx.px, orangeghostTmx.py), GHOSTSPRITE.ORANGE, orangeghostSprite)
-        self.tilemap.layers.append(orangeghostSprite)
+        self.orangeghost = Ghost((orangeghostTmx.px, orangeghostTmx.py), GHOSTSPRITE.ORANGE, self.orangeghostSprite)
+        self.tilemap.layers.append(self.orangeghostSprite)
 
     def initBiscuit(self):
-        biscuitSprite = tmx.SpriteLayer()
+        self.biscuitSprite = tmx.SpriteLayer()
         for biscuit in self.tilemap.layers['biscuit'].find('biscuit'):
-            Biscuit((biscuit.px,biscuit.py),biscuitSprite)
-        self.tilemap.layers.append(biscuitSprite)
+            Biscuit((biscuit.px,biscuit.py),self.biscuitSprite)
+        self.tilemap.layers.append(self.biscuitSprite)
 
 
     def initPowerball(self):
-        powerballSprite = tmx.SpriteLayer()
+        self.powerballSprite = tmx.SpriteLayer()
         for powerball in self.tilemap.layers['biscuit'].find('powerball'):
-            Powerball((powerball.px,powerball.py),powerballSprite)
-        self.tilemap.layers.append(powerballSprite)
+            Powerball((powerball.px,powerball.py),self.powerballSprite)
+        self.tilemap.layers.append(self.powerballSprite)
 
     def notify(self, event):
         """
@@ -96,6 +99,10 @@ class GraphicalView(object):
         elif isinstance(event,PacmanDieEvent):
             self.pacmanDie()
         elif isinstance(event, TickEvent):
+            self.count += 1
+            if(self.count == 16):
+                self.pacman.updateDirection(self.direction)
+                self.count = 0
             self.renderall()
             self.pacman.updatePosition(self.prolog)
             self.updateGhostPosition(self.prolog, self.pacman)
@@ -163,8 +170,9 @@ class GraphicalView(object):
             self.direction = PACMANDIRECTION.UP
         elif char == 'D':
             self.direction = PACMANDIRECTION.DOWN
-        self.pacman.updateDirection(self.direction)
 
+        # self.pacman.updateDirection(self.direction)
+        # self.blindPacman()
 
     def redghostDie(self):
         a = Laser((self.redghost.posx,self.redghost.posy),LASERSPRITE.LEFT,self.redghostSprite)
@@ -172,9 +180,11 @@ class GraphicalView(object):
         c = Laser((self.redghost.posx,self.redghost.posy), LASERSPRITE.UP, self.redghostSprite)
         d = Laser((self.redghost.posx,self.redghost.posy), LASERSPRITE.DOWN, self.redghostSprite)
 
-
-    def updateGhostPosition(self):
-        self.redghost.updatePosition()
+    def blueghostDie(self):
+        a = Water((self.blueghost.posx,self.blueghost.posy),self.blueghostSprite)
+        print 'water created'
+    def updateGhostPosition(self,prolog,pacman):
+        self.redghost.updatePosition(prolog,pacman)
         # self.blueghost.updatePosition()
         # self.pinkghost.updatePosition()
         # self.orangeghost.updatePosition()
@@ -189,3 +199,10 @@ class GraphicalView(object):
         self.pacman.rect.y = 0
 
 
+    def blindPacman(self):
+        if(self.isBlind):
+            return
+        blindLayer = tmx.SpriteLayer()
+        Blind((self.pacman.rect.centerx,self.pacman.rect.centery),blindLayer)
+        self.tilemap.layers.append(blindLayer)
+        self.isBlind = True

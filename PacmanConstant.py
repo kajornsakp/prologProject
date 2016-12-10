@@ -64,10 +64,12 @@ LASERSPRITE = enum(LEFT=["sprite/laser-l-1.gif","sprite/laser-l-2.gif",
                    DOWN=["sprite/laser-d-1.gif", "sprite/laser-d-2.gif",
                           "sprite/laser-d-3.gif"])
 
-WATERSPRITE = enum(WATER=["sprite/water-splash-1", "sprite/water-splash-2.gif",
+WATERSPRITE = enum(WATER=["sprite/water-splash-1.gif", "sprite/water-splash-2.gif",
                         "sprite/water-splash-3.gif", "sprite/water-splash-4.gif",
                         "sprite/water-splash-5.gif", "sprite/water-splash-6.gif",
                           "sprite/water-splash-7.gif"])
+
+BLINDSPRITE = "sprite/blind-mask.gif"
 
 GHOSTMODE = enum(SCARE=0,CHASE=1)
 GHOSTDIRECTION = enum(UP=0,DOWN=1,LEFT=2,RIGHT=3)
