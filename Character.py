@@ -127,6 +127,7 @@ class Ghost(pygame.sprite.Sprite):
         self.step = 0
         self.movespeed = 1
         self.c = 0
+        self.count = 0
 
 
     def draw(self,screen):
@@ -139,44 +140,78 @@ class Ghost(pygame.sprite.Sprite):
             self.posx -= self.movespeed
         elif self.ghostdirection == GHOSTDIRECTION.UP:
             self.posy -= self.movespeed
-
         elif self.ghostdirection == GHOSTDIRECTION.DOWN:
             self.posy += self.movespeed
+
+
         if self.posx % 16 == 0 or self.posy % 16 == 0:
-            x = math.floor(self.posx / 16)
-            y = math.floor(self.posy / 16)
-            self.c += 1
-            if self.c >= 16:
-                self.prevx = x
-                self.prevy = y
-                direction = 0
-                if self.direction == GHOSTSPRITE.RED or self.direction == GHOSTSPRITE.ORANGE:
-                    direction = prolog.moveGhost(int(x)+1, int(y)+1, self.direction)
-                else:
-                    if self.direction == GHOSTSPRITE.LIGHTBLUE:
-                        y = int(math.floor(pacman.rect.centery / 16)) + 1
-                        x = int(math.floor(pacman.rect.centerx / 16)) + 1
-                        if y-4 > 0 and y+4 < 32 and x > 0 and x < 29:
-                            if pacman.direction == PACMANDIRECTION.UP:
-                                direction = prolog.moveGhost(x, y-4, self.direction)
-                            elif pacman.direction == PACMANDIRECTION.DOWN:
-                                direction = prolog.moveGhost(x, y+4, self.direction)
-                            elif pacman.direction == PACMANDIRECTION.RIGHT:
-                                direction = prolog.moveGhost(x+4, y, self.direction)
-                            elif pacman.direction == PACMANDIRECTION.LEFT:
-                                direction = prolog.moveGhost(x-4, y, self.direction)
+            if self.posx % 16 == 0 or self.posy % 16 == 0:
+                x1 = math.floor(self.posx / 16)
+                y1 = math.floor(self.posy / 16)
+                y = int(math.floor(pacman.rect.centery / 16)) + 1
+                x = int(math.floor(pacman.rect.centerx / 16)) + 1
+                self.c += 1
+                if self.c >= 16:
+                    self.c = 0
+                    self.prevx = x1
+                    self.prevy = 1
+                    direction = 0
+                    if self.direction == GHOSTSPRITE.RED or self.direction == GHOSTSPRITE.ORANGE:
+                        direction = prolog.moveGhost(x, y, self.direction)
+                    else:
+                        if self.direction == GHOSTSPRITE.LIGHTBLUE:
+                            print("+++++++++++++++++++++++++++++++++++++")
+                            if y - 4 > 0 and y + 4 < 32 and x - 4 > 0 and x + 4 < 29:
+                                print "------------------------------------"
+                                print "pacmanx,y: " + str(x) + ',' + str(y)
+                                if pacman.direction == PACMANDIRECTION.UP:
+                                    direction = prolog.moveGhost(x, y - 4, self.direction)
+                                elif pacman.direction == PACMANDIRECTION.DOWN:
+                                    direction = prolog.moveGhost(x, y + 4, self.direction)
+                                elif pacman.direction == PACMANDIRECTION.RIGHT:
+                                    direction = prolog.moveGhost(x + 4, y, self.direction)
+                                elif pacman.direction == PACMANDIRECTION.LEFT:
+                                    direction = prolog.moveGhost(x - 4, y, self.direction)
+                            else:
+                                print "===================================="
+                                if pacman.direction == PACMANDIRECTION.UP:
+                                    direction = prolog.moveGhost(x, 2, self.direction)
+                                elif pacman.direction == PACMANDIRECTION.DOWN:
+                                    direction = prolog.moveGhost(x, 30, self.direction)
+                                elif pacman.direction == PACMANDIRECTION.RIGHT:
+                                    direction = prolog.moveGhost(2, y, self.direction)
+                                elif pacman.direction == PACMANDIRECTION.LEFT:
+                                    direction = prolog.moveGhost(27, y, self.direction)
                         else:
-                            if pacman.direction == PACMANDIRECTION.UP:
-                                direction = prolog.moveGhost(x, 2, self.direction)
-                            elif pacman.direction == PACMANDIRECTION.DOWN:
-                                direction = prolog.moveGhost(x, 30, self.direction)
-                            elif pacman.direction == PACMANDIRECTION.RIGHT:
-                                direction = prolog.moveGhost(2, y, self.direction)
-                            elif pacman.direction == PACMANDIRECTION.LEFT:
-                                direction = prolog.moveGhost(27, y, self.direction)
-                print direction
-                self.updateDirection(direction)
-                self.c = 0
+                            direction = prolog.moveGhost(x, y, self.direction)
+                    print direction
+                    if direction == 100:
+                        self.updateDirection(self.ghostdirection)
+                    else:
+                        self.updateDirection(direction)
+
+
+    def changePath(self, x1, y1,game):
+        x = int(math.floor(self.posx / 16)) + 1
+        y = int(math.floor(self.posy / 16)) + 1
+        qu = 'findAdj((' + str(x) + ',' + str(y) + '),[(' + str(x+x1) + ',' + str(y + y1) + ')],X)'
+        q = str(list(game.prolog.p.query(qu))[0]['X'][0]).split(',')
+        newX = int(q[1][1] + q[1][2])
+        newY = int(q[2][1] + q[2][2])
+        self.prevx = x
+        self.prevy = y
+        self.updateDirection(self.checkDirection(newX, newY, x, y))
+
+
+    def checkDirection(self, x1, y1, x2, y2):
+        if x1 == x2 and y1 - y2 < 0:
+            return GHOSTDIRECTION.UP
+        elif x1 == x2 and y1 - y2 > 0:
+            return GHOSTDIRECTION.DOWN
+        elif y1 == y2 and x1 - x2 < 0:
+            return GHOSTDIRECTION.LEFT
+        elif y1 == y2 and x1 - x2 > 0:
+            return GHOSTDIRECTION.RIGHT
 
     def updateDirection(self,direction):
         p = self.ghostdirection
@@ -213,9 +248,48 @@ class Ghost(pygame.sprite.Sprite):
                     game.blueghostDie()
                 print "eat ghost"
         new = self.rect
+
         for intersection in game.tilemap.layers['intersection'].collide(new,'intersection'):
-            print "intersect block: ",intersection
-            #code here
+            # print c
+            # self.c += 1
+            # x1 = math.floor(self.posx / 16)
+            # y1 = math.floor(self.posy / 16)
+            #
+            # if self.c >= 16:
+            #     print "-----------------------------------"
+            #     print "X: " + str(x1) + ", Y: " + str(y1)
+            #     self.prevx = x1
+            #     self.prevy = y1
+            #     direction = 0
+            #     y = int(math.floor(game.pacman.rect.centery / 16)) + 1
+            #     x = int(math.floor(game.pacman.rect.centerx / 16)) + 1
+            #     if self.direction == GHOSTSPRITE.RED or self.direction == GHOSTSPRITE.ORANGE:
+            #         direction = game.prolog.moveGhost(x, y, self.direction)
+            #     else:
+            #         if self.direction == GHOSTSPRITE.LIGHTBLUE:
+            #             if y - 4 > 0 and y + 4 < 32 and x > 0 and x < 29:
+            #                 if pacman.direction == PACMANDIRECTION.UP:
+            #                     direction = game.prolog.moveGhost(x, y - 4, self.direction)
+            #                 elif pacman.direction == PACMANDIRECTION.DOWN:
+            #                     direction = game.prolog.moveGhost(x, y + 4, self.direction)
+            #                 elif pacman.direction == PACMANDIRECTION.RIGHT:
+            #                     direction = game.prolog.moveGhost(x + 4, y, self.direction)
+            #                 elif pacman.direction == PACMANDIRECTION.LEFT:
+            #                     direction = game.prolog.moveGhost(x - 4, y, self.direction)
+            #             else:
+            #                 if pacman.direction == PACMANDIRECTION.UP:
+            #                     direction = game.prolog.moveGhost(x, 2, self.direction)
+            #                 elif pacman.direction == PACMANDIRECTION.DOWN:
+            #                     direction = game.prolog.moveGhost(x, 30, self.direction)
+            #                 elif pacman.direction == PACMANDIRECTION.RIGHT:
+            #                     direction = game.prolog.moveGhost(2, y, self.direction)
+            #                 elif pacman.direction == PACMANDIRECTION.LEFT:
+            #                     direction = game.prolog.moveGhost(27, y, self.direction)
+            #     print direction
+            #     self.updateDirection(direction)
+            #     self.c = 0
+            c = 0
+
         for cell in game.tilemap.layers['wall'].collide(new, 'wall'):
             blockers = cell['wall']
             if(blockers == ""):
@@ -228,18 +302,22 @@ class Ghost(pygame.sprite.Sprite):
                 if(new.centerx < cell.right and new.centerx > cell.left and self.getCenterY(cell) > new.centery):
                     self.movespeed = 0
 
-
             elif(self.ghostdirection == GHOSTDIRECTION.LEFT):
                 if(new.centery > cell.top and new.centery < cell.bottom and new.centerx > self.getCenterX(cell)):
                     self.movespeed = 0
-
             elif(self.ghostdirection == GHOSTDIRECTION.RIGHT):
                 if (new.centery > cell.top and new.centery < cell.bottom and new.centerx < self.getCenterX(cell)):
                     self.movespeed = 0
+
+
         if (new.centerx > 440 and self.ghostdirection == GHOSTDIRECTION.RIGHT):
             self.posx = 8
+            self.c = 8
+            print "+++++++++++++++++++++++++++++++++"
         elif (new.centerx < 8 and self.ghostdirection == GHOSTDIRECTION.LEFT):
             self.posx = 440
+            self.c = 8
+            print "===================================="
 
     def getCenterX(self,cell):
         return (cell.right-cell.left)/2+cell.left

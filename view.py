@@ -37,7 +37,7 @@ class GraphicalView(object):
         self.life = 3
         self.isBlind = False
         self.count = 0
-
+        self.countGhost = 0
 
     def initPacman(self):
         self.pacmanSprite = tmx.SpriteLayer()
@@ -55,17 +55,17 @@ class GraphicalView(object):
 
         self.pinkghostSprite = tmx.SpriteLayer()
         pinkghostTmx = self.tilemap.layers['ghost'].find('pinkghost')[0]
-        self.pinkghost = Ghost((pinkghostTmx.px,pinkghostTmx.py), GHOSTSPRITE.PINK,self.pinkghostSprite)
+        self.pinkghost = Ghost((redghostTmx.px, redghostTmx.py), GHOSTSPRITE.PINK,self.pinkghostSprite)
         self.tilemap.layers.append(self.pinkghostSprite)
 
         self.blueghostSprite = tmx.SpriteLayer()
         blueghostTmx = self.tilemap.layers['ghost'].find('blueghost')[0]
-        self.blueghost = Ghost((blueghostTmx.px, blueghostTmx.py), GHOSTSPRITE.LIGHTBLUE, self.blueghostSprite)
+        self.blueghost = Ghost((redghostTmx.px, redghostTmx.py), GHOSTSPRITE.LIGHTBLUE, self.blueghostSprite)
         self.tilemap.layers.append(self.blueghostSprite)
 
         self.orangeghostSprite = tmx.SpriteLayer()
         orangeghostTmx = self.tilemap.layers['ghost'].find('orangeghost')[0]
-        self.orangeghost = Ghost((orangeghostTmx.px, orangeghostTmx.py), GHOSTSPRITE.ORANGE, self.orangeghostSprite)
+        self.orangeghost = Ghost((redghostTmx.px, redghostTmx.py), GHOSTSPRITE.ORANGE, self.orangeghostSprite)
         self.tilemap.layers.append(self.orangeghostSprite)
 
     def initBiscuit(self):
@@ -185,10 +185,10 @@ class GraphicalView(object):
         print 'water created'
 
     def updateGhostPosition(self, prolog,pacman):
-         self.redghost.updatePosition(prolog, pacman)
-        # self.blueghost.updatePosition()
-        # self.pinkghost.updatePosition()
-        # self.orangeghost.updatePosition()
+        self.redghost.updatePosition(prolog, pacman)
+        self.blueghost.updatePosition(prolog, pacman)
+        self.pinkghost.updatePosition(prolog, pacman)
+        self.orangeghost.updatePosition(prolog, pacman)
 
 
     def checkLimit(self):

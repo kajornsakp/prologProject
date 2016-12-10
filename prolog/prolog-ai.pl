@@ -138,14 +138,12 @@ getGhostPrev(Type,X,Y):-
 
 %move pacman to new position
 movePacman(X,Y):-
-    write("cs1"),
     \+ghost(X,Y,_,scare),
     pacman(_,_,normal),
     fail.
 
 
 movePacman(X,Y):-
-  write("sc1"),
   ghost(X,Y,T,scare),
   validatePos(X,Y),
   retract(pacman(_,_,Type)),
@@ -153,19 +151,15 @@ movePacman(X,Y):-
   eatGhost.
 
 movePacman(X,Y):-
-  write("wp1"),
   wrap(X,Y,NX,NY),
   validatePos(NX,NY),
   retract(pacman(_,_,Type)),
   assert(pacman(NX,NY,Type)),write("aslkfjkl"),nl.
 
 movePacman(X,Y):-
-  write("m"),
   validatePos(X,Y),
-  write("v"),
   retract(pacman(_,_,Type)),
-  write("r"),
-  assert(pacman(X,Y,Type)),write("a"),nl.
+  assert(pacman(X,Y,Type)).
 
 changeGhostMode(Type,Mode):-
   retract(ghost(X,Y,Type,_)),
@@ -184,6 +178,8 @@ changeAllGhostsMode(Mode):-
 moveRedGhost:-
   pacman(Px,Py,_),
   moveGhost(red,(Px,Py)).
+
+moveRedGhost(X,Y):- moveGhost(red,(X,Y)).
 
 moveBlueGhost(X,Y):-
   moveGhost(blue,(X,Y)).
@@ -250,8 +246,7 @@ moveGhost(X,Y,Type,Mode):-
 targetGhost(CurrPoint,(NextX,NextY),Goal,Type):-
   ghostPrev(Xprev,Yprev,Type),
   write("Goal: "),write(Goal),nl,
-  astar(CurrPoint,[],Goal,[(Xprev,Yprev),(14,13),(15,13)],[(X1,Y1),(NextX,NextY)|T],1,Temp,TotalCost),
-  ghostPrev(Xp,Yp,Type).
+  astar(CurrPoint,[],Goal,[(Xprev,Yprev),(14,13),(15,13)],[(X1,Y1),(NextX,NextY)|T],1,Temp,TotalCost).
   %%turnBase(CurrPoint,Goal,Type,(NextX,NextY)).
 
 %orange ghost behaviour param(CurrentPosition,outputPosition).
@@ -324,7 +319,7 @@ removeElement(N,[H|T],[H|Z]):- removeElement(N,T,Z).
 
 % a star param(currentPosition,openlist,GoalPosition,VisitedPoint, outputPath, totalG, temp,outputCost)
 astar((X,Y),Open,(X,Y),Visited,[(X,Y)],GValue,Temp,Temp):- !.
-astar((X,Y),Open,Goal,Visited,[(X,Y)|T],GValue,Temp,Temp):- GValue >= 25,!.
+astar((X,Y),Open,Goal,Visited,[(X,Y)|T],GValue,Temp,Temp):- GValue >= 5,!.
 astar((X,Y),[],Goal,Visited,[(X,Y)|T],GValue,Temp,TotalCost):-
   findAdj((X,Y),Visited,PossiblePoint),
   %%write("P: "),write(PossiblePoint),nl,
