@@ -70,6 +70,7 @@ WATERSPRITE = enum(WATER=["sprite/water-splash-1.gif", "sprite/water-splash-2.gi
                           "sprite/water-splash-7.gif"])
 
 BLINDSPRITE = "sprite/blind-mask.gif"
-
+TRAPSPRITE = "sprite/trap.gif"
+FN = enum(LASER=0,TRAP=1)
 GHOSTMODE = enum(SCARE=0,CHASE=1)
 GHOSTDIRECTION = enum(UP=0,DOWN=1,LEFT=2,RIGHT=3)

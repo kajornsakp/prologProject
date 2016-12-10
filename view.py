@@ -38,6 +38,11 @@ class GraphicalView(object):
         self.isBlind = False
         self.count = 0
         self.countGhost = 0
+        self.timerSec = 0
+        self.isTimerInit = False
+        self.fn = None
+        self.tick = None
+
 
     def initPacman(self):
         self.pacmanSprite = tmx.SpriteLayer()
@@ -90,6 +95,9 @@ class GraphicalView(object):
             self.initialize()
         elif isinstance(event,InputEvent):
             self.updateDirection(event.char)
+        elif isinstance(event,ClockEvent):
+            self.timerSec -= 1
+            self.countDown(self.fn)
         elif isinstance(event, QuitEvent):
             self.isinitialized = False
             pygame.quit()
@@ -105,9 +113,6 @@ class GraphicalView(object):
             self.renderall()
             self.pacman.updatePosition(self.prolog)
             self.updateGhostPosition(self.prolog, self.pacman)
-            # self.checkLimit()
-            # limit the redraw speed to 30 frames per second
-            # print self.redghost.mode
             self.clock.tick(60)
 
     def changeMode(self,event):
@@ -169,30 +174,39 @@ class GraphicalView(object):
             self.direction = PACMANDIRECTION.UP
         elif char == 'D':
             self.direction = PACMANDIRECTION.DOWN
-
-        # self.pacman.updateDirection(self.direction)
-        # self.blindPacman()
-
     def redghostDie(self):
-        a = Laser((self.redghost.posx,self.redghost.posy),LASERSPRITE.LEFT,self.redghostSprite)
-        b = Laser((self.redghost.posx,self.redghost.posy),LASERSPRITE.RIGHT, self.redghostSprite)
-        c = Laser((self.redghost.posx,self.redghost.posy), LASERSPRITE.UP, self.redghostSprite)
-        d = Laser((self.redghost.posx,self.redghost.posy), LASERSPRITE.DOWN, self.redghostSprite)
+        posx = self.redghost.posx
+        posy = self.redghost.posy
+        self.createTimer(6,lambda : self.fireLaser(posx,posy))
 
 
     def blueghostDie(self):
-        a = Water((self.blueghost.posx,self.blueghost.posy),self.blueghostSprite)
-        print 'water created'
+        self.createWater()
+
+    def pinkghostDie(self):
+        self.createTrap(self.pinkghost.posx,self.pinkghost.posy)
+        self.createTimer(3,lambda : self.releaseTrap())
+
+    def orangeghostDie(self):
+        self.blindPacman()
+
+    def fireLaser(self,posx,posy):
+        a = Laser((posx, posy), LASERSPRITE.LEFT, self.biscuitSprite)
+        b = Laser((posx, posy), LASERSPRITE.RIGHT, self.biscuitSprite)
+        c = Laser((posx, posy), LASERSPRITE.UP, self.biscuitSprite)
+        d = Laser((posx, posy), LASERSPRITE.DOWN, self.biscuitSprite)
+
+    def createWater(self):
+        Water((self.blueghost.posx, self.blueghost.posy), self.biscuitSprite)
 
     def updateGhostPosition(self, prolog,pacman):
+
         self.redghost.updatePosition(prolog, pacman)
         self.blueghost.updatePosition(prolog, pacman)
         self.pinkghost.updatePosition(prolog, pacman)
         self.orangeghost.updatePosition(prolog, pacman)
 
 
-    def checkLimit(self):
-        print self.pacman.rect
 
     def pacmanDie(self):
         self.life -= 1
@@ -204,6 +218,32 @@ class GraphicalView(object):
         if(self.isBlind):
             return
         blindLayer = tmx.SpriteLayer()
-        Blind((self.pacman.rect.centerx,self.pacman.rect.centery),blindLayer)
+        Blind((self.pacman.posx,self.pacman.posy),blindLayer)
         self.tilemap.layers.append(blindLayer)
         self.isBlind = True
+
+    def createTrap(self,posx,posy):
+        print "create trap"
+        Trap((self.pinkghost.posx,self.pinkghost.posy),self.biscuitSprite)
+    def releaseTrap(self):
+        self.pacman.movespeed = 1
+        self.pacman.releaseTrap()
+    def createTimer(self,time,fn):
+        if(self.isTimerInit == True):
+            return
+        print "create timer"
+        pygame.time.set_timer(pygame.USEREVENT,1000)
+        self.tick = pygame.time.get_ticks()
+        self.timerSec = time
+        self.fn = fn
+        self.isTimerInit = True
+
+    def countDown(self,fn):
+        sec = (pygame.time.get_ticks() - self.tick) / 1000
+        self.timerSec -= sec
+        if(self.timerSec == 1):
+            self.isTimerInit = False
+            self.callAction(fn)
+
+    def callAction(self,fn):
+        fn()

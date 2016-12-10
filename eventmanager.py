@@ -64,6 +64,11 @@ class PacmanDieEvent(Event):
     def __init__(self):
         self.name = "Pacman die"
 
+class ClockEvent(Event):
+    def __init__(self,fn=""):
+        self.fn = fn
+        self.name = "Clock event"
+
 class EventManager(object):
     """
     We coordinate communication between the Model, View, and Controller.

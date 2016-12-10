@@ -34,6 +34,7 @@ class Pacman(pygame.sprite.Sprite):
         self.step = 0
         self.movespeed = 0
         self.c = 0
+        self.isTrap = False
 
 
     def draw(self,screen):
@@ -111,6 +112,9 @@ class Pacman(pygame.sprite.Sprite):
         return (cell.right-cell.left)/2+cell.left
     def getCenterY(self,cell):
         return (cell.bottom-cell.top)/2+cell.top
+
+    def releaseTrap(self):
+        self.isTrap = False
 
 class Ghost(pygame.sprite.Sprite):
     def __init__(self,location,direction,*group):
@@ -242,53 +246,17 @@ class Ghost(pygame.sprite.Sprite):
             if (self.rect.colliderect(game.pacman.rect)):
                 self.kill()
                 if(self.direction == GHOSTSPRITE.RED):
-                    print "redghostdie"
                     game.redghostDie()
                 elif(self.direction == GHOSTSPRITE.LIGHTBLUE):
                     game.blueghostDie()
+                elif(self.direction == GHOSTSPRITE.PINK):
+                    game.pinkghostDie()
+                elif(self.direction == GHOSTSPRITE.ORANGE):
+                    game.orangeghostDie()
                 print "eat ghost"
         new = self.rect
+        c = 0
 
-        for intersection in game.tilemap.layers['intersection'].collide(new,'intersection'):
-            # print c
-            # self.c += 1
-            # x1 = math.floor(self.posx / 16)
-            # y1 = math.floor(self.posy / 16)
-            #
-            # if self.c >= 16:
-            #     print "-----------------------------------"
-            #     print "X: " + str(x1) + ", Y: " + str(y1)
-            #     self.prevx = x1
-            #     self.prevy = y1
-            #     direction = 0
-            #     y = int(math.floor(game.pacman.rect.centery / 16)) + 1
-            #     x = int(math.floor(game.pacman.rect.centerx / 16)) + 1
-            #     if self.direction == GHOSTSPRITE.RED or self.direction == GHOSTSPRITE.ORANGE:
-            #         direction = game.prolog.moveGhost(x, y, self.direction)
-            #     else:
-            #         if self.direction == GHOSTSPRITE.LIGHTBLUE:
-            #             if y - 4 > 0 and y + 4 < 32 and x > 0 and x < 29:
-            #                 if pacman.direction == PACMANDIRECTION.UP:
-            #                     direction = game.prolog.moveGhost(x, y - 4, self.direction)
-            #                 elif pacman.direction == PACMANDIRECTION.DOWN:
-            #                     direction = game.prolog.moveGhost(x, y + 4, self.direction)
-            #                 elif pacman.direction == PACMANDIRECTION.RIGHT:
-            #                     direction = game.prolog.moveGhost(x + 4, y, self.direction)
-            #                 elif pacman.direction == PACMANDIRECTION.LEFT:
-            #                     direction = game.prolog.moveGhost(x - 4, y, self.direction)
-            #             else:
-            #                 if pacman.direction == PACMANDIRECTION.UP:
-            #                     direction = game.prolog.moveGhost(x, 2, self.direction)
-            #                 elif pacman.direction == PACMANDIRECTION.DOWN:
-            #                     direction = game.prolog.moveGhost(x, 30, self.direction)
-            #                 elif pacman.direction == PACMANDIRECTION.RIGHT:
-            #                     direction = game.prolog.moveGhost(2, y, self.direction)
-            #                 elif pacman.direction == PACMANDIRECTION.LEFT:
-            #                     direction = game.prolog.moveGhost(27, y, self.direction)
-            #     print direction
-            #     self.updateDirection(direction)
-            #     self.c = 0
-            c = 0
 
         for cell in game.tilemap.layers['wall'].collide(new, 'wall'):
             blockers = cell['wall']
@@ -377,7 +345,7 @@ class Laser(pygame.sprite.Sprite):
             self.step = 2
         if self.rect.colliderect(game.pacman.rect):
             print "headshot"
-            #game.pacman.kill()
+            game.pacman.kill()
             self.kill()
 
 
@@ -404,8 +372,24 @@ class Blind(pygame.sprite.Sprite):
     def __init__(self,location,*group):
         super(Blind,self).__init__(*group)
         self.image = pygame.image.load(BLINDSPRITE)
-        self.rect = pygame.rect.Rect(location,(500,500))
+        self.rect = pygame.rect.Rect(location,(1500,1500))
 
     def update(self,game):
-        self.rect.x = game.pacman.posx-250
-        self.rect.y = game.pacman.posy+250
+        self.rect.x = game.pacman.posx-self.rect.width/2
+        self.rect.y = game.pacman.posy-self.rect.height/2
+        print self.rect.x,self.rect.y
+        game.tilemap.set_focus(self.rect.x, self.rect.y)
+
+
+class Trap(pygame.sprite.Sprite):
+    def __init__(self,location,*group):
+        super(Trap,self).__init__(*group)
+        self.image = pygame.image.load(TRAPSPRITE)
+        self.rect = pygame.rect.Rect(location,(16,16))
+
+    def update(self,game):
+        if(self.rect.colliderect(game.pacman.rect)):
+            if(game.pacman.isTrap == False):
+                game.pacman.movespeed = 0
+            else:
+                game.pacman.movespeed = 1

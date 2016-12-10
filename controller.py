@@ -12,6 +12,8 @@ class Keyboard(object):
     def notify(self, event):
         if isinstance(event, TickEvent):
             for event in pygame.event.get():
+                if event.type == pygame.USEREVENT:
+                    self.evManager.Post(ClockEvent())
                 if event.type == pygame.QUIT:
                     self.evManager.Post(QuitEvent())
                 if event.type == pygame.KEYDOWN:
