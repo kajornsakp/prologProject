@@ -389,7 +389,7 @@ class Trap(pygame.sprite.Sprite):
 
     def update(self,game):
         if(self.rect.colliderect(game.pacman.rect)):
-            if(game.pacman.isTrap == False):
+            if(game.pacman.isTrap == True):
                 game.pacman.movespeed = 0
             else:
                 game.pacman.movespeed = 1
