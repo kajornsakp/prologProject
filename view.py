@@ -181,6 +181,7 @@ class GraphicalView(object):
         self.createTimer(64,lambda : self.fireLaser(posx,posy))
 
 
+
     def blueghostDie(self):
         self.createWater()
 
@@ -202,10 +203,10 @@ class GraphicalView(object):
 
     def updateGhostPosition(self, prolog,pacman):
 
-        self.redghost.updatePosition(prolog, pacman)
-        self.blueghost.updatePosition(prolog, pacman)
-        self.pinkghost.updatePosition(prolog, pacman)
-        self.orangeghost.updatePosition(prolog, pacman)
+        # self.redghost.updatePosition(prolog, self)
+        self.blueghost.updatePosition(prolog, self)
+        # self.pinkghost.updatePosition(prolog, self)
+        # self.orangeghost.updatePosition(prolog, self)
 
 
     def pacmanDie(self):

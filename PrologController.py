@@ -26,29 +26,29 @@ class PrologController:
             return self.moveOrangeGhost(x,y)
 
     def moveRedGhost(self, x, y):
-        print "before move: " + str(list(self.p.query('ghost(X,Y,red,_)')))
+        # print "before move: " + str(list(self.p.query('ghost(X,Y,red,_)')))
 
         ghost = list(self.p.query('moveRedGhost('+str(x)+','+str(y)+')'))
 
         prev = list(self.p.query('ghostPrev(X1,Y1,red)'))
         curr = list(self.p.query('ghost(X2,Y2,red,W)'))
         # print(curr)
-        print "prev: " + str(prev)
-        # print list(self.p.query('pacman(X,Y,Z)'))
-        # print curr[0]['Y2']
-        print "current: " + str(curr)
+        # print "prev: " + str(prev)
+        # # print list(self.p.query('pacman(X,Y,Z)'))
+        # # print curr[0]['Y2']
+        # print "current: " + str(curr)
         return self.getDirection(curr[0]['X2'], curr[0]['Y2'], prev[0]['X1'], prev[0]['Y1'])
         # return 0
 
     def moveBlueGhost(self, x, y):
-        print "before move: " + str(list(self.p.query('ghost(X,Y,blue,_)')))
+        # print "before move: " + str(list(self.p.query('ghost(X,Y,blue,_)')))
         b = "moveBlueGhost(" + str(x) + "," + str(y) + ")"
 
         ghost = list(self.p.query(b))
         prev = list(self.p.query('ghostPrev(X,Y,blue)'))
         curr = list(self.p.query('ghost(X,Y,blue,W)'))
-        print "prev: " + str(prev)
-        print "current: " + str(curr)
+        # print "prev: " + str(prev)
+        # print "current: " + str(curr)
         return self.getDirection(curr[0]['X'], curr[0]['Y'], prev[0]['X'], prev[0]['Y'])
 
     def movePinkGhost(self, x, y):
@@ -77,6 +77,15 @@ class PrologController:
             return GHOSTDIRECTION.LEFT
         elif y1 == y2 and x1 - x2 > 0:
             return GHOSTDIRECTION.RIGHT
+
+    def changeAllGhostsMode(self,mode):
+        list(self.p.query('changeAllGhostsMode('+mode+')'))
+
+    def changePacmanMode(self,mode):
+        list(self.p.query('changePacmanMode(' + mode + ')'))
+
+    def changeGhostMode(self,type,mode):
+        list(self.p.query('changeGhostMode('+type + ',' + mode + ')'))
 
     def getPacman(self):
         return list(self.p.query('pacman(X,Y,_)'))

@@ -54,7 +54,7 @@ powerBall(2,14).
 powerBall(27,14).
 ghost(14,12,red,chase).
 ghostPrev(14,13,red).
-ghost(14,12,pink,scatter).
+ghost(14,12,pink,chase).
 ghostPrev(14,13,pink).
 ghost(14,12,blue,chase).
 ghostPrev(14,13,blue).
@@ -161,6 +161,10 @@ movePacman(X,Y):-
   retract(pacman(_,_,Type)),
   assert(pacman(X,Y,Type)).
 
+changePacmanMode(Mode):-
+  retract(pacman(X,Y,_)),
+  assert(pacman(X,Y,Mode)).
+
 changeGhostMode(Type,Mode):-
   retract(ghost(X,Y,Type,_)),
   assert(ghost(X,Y,Type,Mode)).
@@ -214,13 +218,13 @@ moveGhost(Type,Goal):-
 
 %for scatter mode
 moveGhost(Type,Goal):-
-  ghost(X,Y,Type,scatter),write("hey"),
+  ghost(X,Y,Type,scatter),
   scatterGhost((X,Y),(NX,NY),Type),!,
   moveGhost(NX,NY,Type,scatter).
 
 %for scare mode when pacman eat power ball
 moveGhost(Type,Goal):-
-  ghost(X,Y,Type,scare),write("HI"),
+  ghost(X,Y,Type,scare),
   scatterGhost((X,Y),(NX,NY),Type),!,
   moveGhost(NX,NY,Type,scare).
 
@@ -236,7 +240,7 @@ moveGhost(X,Y,Type,Mode):-
 moveGhost(X,Y,Type,Mode):-
   retract(ghost(W,Z,Type,Mode)),
   retract(ghostPrev(_,_,Type)),
-  write(X), write("/"),write(Y),nl,
+  %write(X), write("/"),write(Y),nl,
   assert(ghost(X,Y,Type,Mode)),
   assert(ghostPrev(W,Z,Type)),!,
   \+alive.
@@ -245,7 +249,7 @@ moveGhost(X,Y,Type,Mode):-
 %ghost target X point. param(currentPosition,nextposition,goalposition,typeofghost).
 targetGhost(CurrPoint,(NextX,NextY),Goal,Type):-
   ghostPrev(Xprev,Yprev,Type),
-  write("Goal: "),write(Goal),nl,
+  %write("Goal: "),write(Goal),nl,
   astar(CurrPoint,[],Goal,[(Xprev,Yprev),(14,13),(15,13)],[(X1,Y1),(NextX,NextY)|T],1,Temp,TotalCost).
   %%turnBase(CurrPoint,Goal,Type,(NextX,NextY)).
 
@@ -306,7 +310,7 @@ adj((X,Y),(NX,Y)) :-
     X > 1,
     NX is X - 1.
 
-adj((X,Y),(NX,NY)):- wrap(X,Y,NX,NY), write("heyyy").
+adj((X,Y),(NX,NY)):- wrap(X,Y,NX,NY).
 
 %find distance param(Point1,Point2, output)
 h((X,Y),(X2,Y2),D) :-

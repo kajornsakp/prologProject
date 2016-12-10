@@ -149,7 +149,7 @@ class Ghost(pygame.sprite.Sprite):
     def draw(self,screen):
         screen.blit(self.image,self.rect)
 
-    def updatePosition(self, prolog, pacman):
+    def updatePosition(self, prolog, game):
         if self.ghostdirection == GHOSTDIRECTION.RIGHT:
             self.posx += self.movespeed
         elif self.ghostdirection == GHOSTDIRECTION.LEFT:
@@ -164,8 +164,8 @@ class Ghost(pygame.sprite.Sprite):
             if self.posx % 16 == 0 or self.posy % 16 == 0:
                 x1 = math.floor(self.posx / 16)
                 y1 = math.floor(self.posy / 16)
-                y = int(math.floor(pacman.rect.centery / 16)) + 1
-                x = int(math.floor(pacman.rect.centerx / 16)) + 1
+                y = int(math.floor(game.pacman.rect.centery / 16)) + 1
+                x = int(math.floor(game.pacman.rect.centerx / 16)) + 1
                 self.c += 1
                 if self.c >= 16:
                     self.c = 0
@@ -176,36 +176,68 @@ class Ghost(pygame.sprite.Sprite):
                         direction = prolog.moveGhost(x, y, self.direction)
                     else:
                         if self.direction == GHOSTSPRITE.LIGHTBLUE:
-                            print("+++++++++++++++++++++++++++++++++++++")
-                            if y - 4 > 0 and y + 4 < 32 and x - 4 > 0 and x + 4 < 29:
-                                print "------------------------------------"
-                                print "pacmanx,y: " + str(x) + ',' + str(y)
-                                if pacman.direction == PACMANDIRECTION.UP:
-                                    direction = prolog.moveGhost(x, y - 4, self.direction)
-                                elif pacman.direction == PACMANDIRECTION.DOWN:
-                                    direction = prolog.moveGhost(x, y + 4, self.direction)
-                                elif pacman.direction == PACMANDIRECTION.RIGHT:
-                                    direction = prolog.moveGhost(x + 4, y, self.direction)
-                                elif pacman.direction == PACMANDIRECTION.LEFT:
-                                    direction = prolog.moveGhost(x - 4, y, self.direction)
-                            else:
-                                print "===================================="
-                                if pacman.direction == PACMANDIRECTION.UP:
-                                    direction = prolog.moveGhost(x, 2, self.direction)
-                                elif pacman.direction == PACMANDIRECTION.DOWN:
-                                    direction = prolog.moveGhost(x, 30, self.direction)
-                                elif pacman.direction == PACMANDIRECTION.RIGHT:
-                                    direction = prolog.moveGhost(2, y, self.direction)
-                                elif pacman.direction == PACMANDIRECTION.LEFT:
-                                    direction = prolog.moveGhost(27, y, self.direction)
+                            # print("+++++++++++++++++++++++++++++++++++++")
+                            direction = self.getBlueDirection(x, y, game.pacman, prolog)
+
                         else:
-                            direction = prolog.moveGhost(x, y, self.direction)
-                    print direction
+                            direction = self.getPinkDirection(x, y, game.redghost, prolog)
+                    # print direction
                     if direction == 100:
                         self.updateDirection(self.ghostdirection)
                     else:
                         self.updateDirection(direction)
 
+    def getBlueDirection(self, x, y, pacman, prolog):
+        if y - 4 > 1 and y + 4 < 31 and x - 4 > 1 and x + 4 < 28:
+            # print "------------------------------------"
+            # print "pacmanx,y: " + str(x) + ',' + str(y)
+            if pacman.direction == PACMANDIRECTION.UP:
+                return prolog.moveGhost(x, y - 4, self.direction)
+            elif pacman.direction == PACMANDIRECTION.DOWN:
+                return prolog.moveGhost(x, y + 4, self.direction)
+            elif pacman.direction == PACMANDIRECTION.RIGHT:
+                return prolog.moveGhost(x + 4, y, self.direction)
+            elif pacman.direction == PACMANDIRECTION.LEFT:
+                return prolog.moveGhost(x - 4, y, self.direction)
+        else:
+            # print "===================================="
+            if pacman.direction == PACMANDIRECTION.UP:
+                return prolog.moveGhost(x, 2, self.direction)
+            elif pacman.direction == PACMANDIRECTION.DOWN:
+                return prolog.moveGhost(x, 30, self.direction)
+            elif pacman.direction == PACMANDIRECTION.RIGHT:
+                return prolog.moveGhost(2, y, self.direction)
+            elif pacman.direction == PACMANDIRECTION.LEFT:
+                return prolog.moveGhost(27, y, self.direction)
+
+    def getPinkDirection(self, px, py, redghost, prolog):
+        ry = int(math.floor(redghost.rect.centery / 16)) + 1
+        rx = int(math.floor(redghost.rect.centerx / 16)) + 1
+        newx = px + (rx - px)
+        newy = py + (ry - py)
+        if newx < 1 and newy > 1 and newy < 31:
+            return prolog.moveGhost(2, newy, self.direction)
+        elif newx > 28 and newy > 1 and newy < 31:
+            return prolog.moveGhost(28, newy, self.direction)
+        elif newy < 1 and newx > 1 and newx < 28:
+            return prolog.moveGhost(newx, 2, self.direction)
+        elif newy > 31 and newx > 1 and newx < 28:
+            return prolog.moveGhost(newx, 30, self.direction)
+        elif newy > 1 and newy < 31  and newx > 1 and newx < 28:
+            return prolog.moveGhost(newx, newy, self.direction)
+        else:
+            return prolog.moveGhost(px, py, self.direction)
+
+
+    def changeMode(self, mode, prolog):
+        if self.direction == GHOSTSPRITE.RED:
+            prolog.changeGhostMode('red', mode)
+        elif self.direction == GHOSTSPRITE.LIGHTBLUE:
+            prolog.changeGhostMode('blue', mode)
+        elif self.direction == GHOSTSPRITE.PINK:
+            prolog.changeGhostMode('pink', mode)
+        elif self.direction == GHOSTSPRITE.ORANGE:
+            prolog.changeGhostMode('orange', mode)
 
     def changePath(self, x1, y1,game):
         x = int(math.floor(self.posx / 16)) + 1
@@ -293,11 +325,11 @@ class Ghost(pygame.sprite.Sprite):
         if (new.centerx > 440 and self.ghostdirection == GHOSTDIRECTION.RIGHT):
             self.posx = 8
             self.c = 8
-            print "+++++++++++++++++++++++++++++++++"
+            # print "+++++++++++++++++++++++++++++++++"
         elif (new.centerx < 8 and self.ghostdirection == GHOSTDIRECTION.LEFT):
             self.posx = 440
             self.c = 8
-            print "===================================="
+            # print "===================================="
 
     def getCenterX(self,cell):
         return (cell.right-cell.left)/2+cell.left
