@@ -286,3 +286,17 @@ class Laser(pygame.sprite.Sprite):
             game.pacman.kill()
             self.kill()
 
+
+class Water(pygame.sprite.Sprite):
+
+    def __init__(self,location,*group):
+        self.direction = WATERSPRITE.WATER
+        self.image = pygame.image.load(self.direction[0])
+        self.rect = pygame.rect.Rect(location,(16,16))
+        self.step = 0
+
+    def update(self,game):
+        self.image = pygame.image.load(self.direction[self.step])
+        self.step += 1
+        if (self.step == 8):
+            self.step = 7
