@@ -5,6 +5,8 @@ from Map import Map
 from PacmanConstant import *
 from eventmanager import *
 import tmx.tmx as tmx
+from PrologController import PrologController
+
 
 
 class GraphicalView(object):
@@ -32,9 +34,7 @@ class GraphicalView(object):
         self.screenMode = SCREENMODE.MENU
         self.movespeed = 1
         self.prolog = PrologController()
-        self.prolog.start()
         self.life = 3
-
 
 
     def initPacman(self):
@@ -173,12 +173,12 @@ class GraphicalView(object):
         d = Laser((self.redghost.posx,self.redghost.posy), LASERSPRITE.DOWN, self.redghostSprite)
 
 
-    def updateGhostPosition(self):
-        self.redghost.updatePosition()
+    def updateGhostPosition(self, prolog,pacman):
+        # self.redghost.updatePosition(prolog, pacman)
         # self.blueghost.updatePosition()
         # self.pinkghost.updatePosition()
         # self.orangeghost.updatePosition()
-
+        a = 0
 
     def checkLimit(self):
         print self.pacman.rect

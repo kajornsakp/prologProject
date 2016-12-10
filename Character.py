@@ -1,6 +1,7 @@
 import pygame
 from PacmanConstant import *
 from eventmanager import ChangeModeEvent,PacmanDieEvent
+import math
 class Character(pygame.sprite.Sprite):
     def __init__(self,location,*group):
         super(Character,self).__init__(*group)
@@ -28,7 +29,7 @@ class Pacman(pygame.sprite.Sprite):
         self.prevy = 23
         self.direction = direction
         self.image = pygame.image.load(self.direction[0])
-        self.rect = pygame.rect.Rect(location,(16,16))
+        self.rect = pygame.rect.Rect(location,(18,18))
         self.step = 0
         self.movespeed = 0
         self.c = 0
@@ -94,10 +95,11 @@ class Pacman(pygame.sprite.Sprite):
             y = math.floor(self.posy / 16)
             self.c += 1
             if self.c >= 16:
-                self.prevx = x
-                self.prevy = y
-
-                prolog.movePacman(int(x)+1,int(y)+1)
+                if self.prevy != y or self.prevx != x:
+                    self.prevx = x
+                    self.prevy = y
+                    prolog.movePacman(int(x)+1, int(y)+1)
+                    self.c = 0
 
     def getCenterX(self,cell):
         return (cell.right-cell.left)/2+cell.left

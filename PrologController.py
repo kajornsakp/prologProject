@@ -7,13 +7,13 @@ class PrologController:
         self.p = Prolog()
         self.p.consult('prolog/prolog-ai.pl')
 
-    def start(self):
-        self.p.query('start')
-        print "aqqaqaaqaq"
 
     def movePacman(self, x, y):
-        q = "movePacman(" + str(x) + "," + str(y) + ")"
+        q = 'movePacman(' + str(x) + ',' + str(y) + ')'
+        print q
         result = self.p.query(q)
+        list(result)
+        print list(self.p.query('pacman(X,Y,_)'))
 
     def moveGhost(self, x, y, ghostType):
         if ghostType == GHOSTSPRITE.RED:
@@ -26,14 +26,14 @@ class PrologController:
             return self.moveOrangeGhost(x,y)
 
     def moveRedGhost(self, x, y):
-        # print list(self.p.query('ghost(X,Y,red,_)'))
+        print list(self.p.query('ghost(X,Y,red,_)'))
 
         ghost = list(self.p.query('moveRedGhost'))
 
         prev = list(self.p.query('ghostPrev(X1,Y1,red)'))
         curr = list(self.p.query('ghost(X2,Y2,red,W)'))
         # print(curr)
-        # print(prev)
+        print(prev)
         # print list(self.p.query('pacman(X,Y,Z)'))
         # print curr[0]['Y2']
         print curr
