@@ -28,5 +28,6 @@ class Keyboard(object):
                             self.evManager.Post(InputEvent('W',None))
                         elif event.key == pygame.K_DOWN:
                             self.evManager.Post(InputEvent('D',None))
-                        # self.evManager.Post(InputEvent(event.unicode, None))
+                        elif event.key == pygame.K_SPACE:
+                            self.evManager.Post(InputEvent('SPACE',None))
 

@@ -44,6 +44,8 @@ class GraphicalView(object):
         self.fn = None
         self.tick = None
         self.moveable = True
+        self.screenPage = 0
+        self.score = 0
 
 
     def initPacman(self):
@@ -96,7 +98,11 @@ class GraphicalView(object):
         if isinstance(event, InitializeEvent):
             self.initialize()
         elif isinstance(event,InputEvent):
-            self.updateDirection(event.char)
+            if(self.screenPage != 3):
+                if(event.char == "SPACE"):
+                    self.screenPage += 1
+            if(self.screenPage == 3):
+                self.updateDirection(event.char)
         elif isinstance(event, QuitEvent):
             self.isinitialized = False
             pygame.quit()
@@ -105,19 +111,21 @@ class GraphicalView(object):
         elif isinstance(event,PacmanDieEvent):
             self.pacmanDie()
         elif isinstance(event, TickEvent):
-            if(self.isTimerInit):
-                self.countDown(self.fn)
-            self.count += 1
-            if(self.count == 16):
-                x, y = self.checkValidInput(int(math.floor(self.pacman.posx/16)) + 1, int(math.floor(self.pacman.posy / 16)) + 1)
-                moveable = list(self.prolog.p.query('movePacman('+str(x)+','+str(y)+')'))
-                if len(moveable) != 0:
-                    self.direction = self.futureDirection
-                self.pacman.updateDirection(self.direction)
-                self.count = 0
+            if(self.screenPage == 3):
+                if (self.isTimerInit):
+                    self.countDown(self.fn)
+                self.count += 1
+                if (self.count == 16):
+                    x, y = self.checkValidInput(int(math.floor(self.pacman.posx / 16)) + 1,
+                                                int(math.floor(self.pacman.posy / 16)) + 1)
+                    moveable = list(self.prolog.p.query('movePacman(' + str(x) + ',' + str(y) + ')'))
+                    if len(moveable) != 0:
+                        self.direction = self.futureDirection
+                    self.pacman.updateDirection(self.direction)
+                    self.count = 0
+                self.pacman.updatePosition(self.prolog)
+                self.updateGhostPosition(self.prolog, self.pacman)
             self.renderall()
-            self.pacman.updatePosition(self.prolog)
-            self.updateGhostPosition(self.prolog, self.pacman)
             self.clock.tick(60)
 
     def changeMode(self,event):
@@ -141,19 +149,39 @@ class GraphicalView(object):
         
         if not self.isinitialized:
             return
+        if self.screenPage == 0:
+            image = pygame.image.load(SCREENSPRITE[0])
+            rect = image.get_rect()
+            self.screen.blit(image,rect)
+            pygame.display.flip()
+            return
+        if self.screenPage == 1:
+            image = pygame.image.load(SCREENSPRITE[1])
+            rect = image.get_rect()
+            self.screen.blit(image, rect)
+            pygame.display.flip()
+            return
+        if self.screenPage == 2:
+            image = pygame.image.load(SCREENSPRITE[2])
+            rect = image.get_rect()
+            self.screen.blit(image, rect)
+            pygame.display.flip()
+            return
+        if self.pacman.isDead:
+            self.pacmanDie()
+        else:
+            self.tilemap.update(self)
+            self.tilemap.draw(self.screen)
+            self.drawScore()
 
-
-        self.tilemap.update(self)
-        self.tilemap.draw(self.screen)
 
         pygame.display.flip()
 
-    def renderMenu(self):
-        menuText = self.smallfont.render('Main menu',True,Color.WHITE)
-        self.screen.blit(menuText,(SCREENSIZE[0]/3,20))
-
-    def renderGame(self):
-        self.screen.fill(Color.WHITE)
+    def drawScore(self):
+        print self.score
+        myfont = pygame.font.Font('/Users/kajornsak/PycharmProjects/prologProject/font/game_over.ttf', 40)
+        textsurface = myfont.render('SCORE : {0}'.format(self.score), False, (255, 255, 255))
+        self.screen.blit(textsurface, (SCREENSIZE[0]/2-20,SCREENSIZE[1]-30))
 
     def clearScreen(self):
         self.screen.fill((0, 0, 0))
@@ -232,10 +260,10 @@ class GraphicalView(object):
 
 
     def pacmanDie(self):
-        self.life -= 1
-        self.pacman.rect.x = 0
-        self.pacman.rect.y = 0
-
+        image = pygame.image.load(GAMEOVERSPRITE)
+        rect = image.get_rect()
+        self.screen.blit(image,rect)
+        pygame.display.flip()
 
     def blindPacman(self):
         if(self.isBlind):

@@ -40,6 +40,7 @@ class Pacman(pygame.sprite.Sprite):
         self.imageSet = None
         self.future = direction
         self.walkable = True
+        self.isDead = False
 
 
 
@@ -307,6 +308,8 @@ class Ghost(pygame.sprite.Sprite):
             self.image = pygame.image.load(self.direction[self.step])
             if(self.rect.colliderect(game.pacman.rect)):
                 game.pacman.kill()
+                game.pacman.isDead = True
+                game.evManager.Post(PacmanDieEvent())
                 print "die"
 
         elif self.mode == GHOSTMODE.SCARE:
@@ -374,7 +377,7 @@ class Biscuit(pygame.sprite.Sprite):
 
     def update(self,game):
         if self.rect.colliderect(game.pacman.rect):
-            # print "eat biscuit"
+            game.score += 1
             self.kill()
 
 class Powerball(pygame.sprite.Sprite):
