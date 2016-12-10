@@ -9,3 +9,4 @@ view.pyc
 .idea/workspace.xml
 tmx/__init__.pyc
 tmx/tmx.pyc
+*.xml
