@@ -31,6 +31,8 @@ class GraphicalView(object):
         self.direction = PACMANDIRECTION.LEFT
         self.screenMode = SCREENMODE.MENU
         self.movespeed = 1
+        self.prolog = PrologController()
+        self.prolog.start()
         self.life = 3
 
 
@@ -95,8 +97,8 @@ class GraphicalView(object):
             self.pacmanDie()
         elif isinstance(event, TickEvent):
             self.renderall()
-            self.pacman.updatePosition()
-            self.updateGhostPosition()
+            self.pacman.updatePosition(self.prolog)
+            self.updateGhostPosition(self.prolog, self.pacman)
             # self.checkLimit()
             # limit the redraw speed to 30 frames per second
             # print self.redghost.mode
@@ -173,9 +175,9 @@ class GraphicalView(object):
 
     def updateGhostPosition(self):
         self.redghost.updatePosition()
-        self.blueghost.updatePosition()
-        self.pinkghost.updatePosition()
-        self.orangeghost.updatePosition()
+        # self.blueghost.updatePosition()
+        # self.pinkghost.updatePosition()
+        # self.orangeghost.updatePosition()
 
 
     def checkLimit(self):

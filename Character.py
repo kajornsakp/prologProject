@@ -24,11 +24,14 @@ class Pacman(pygame.sprite.Sprite):
         super(Pacman,self).__init__(*groups)
         self.posx = location[0]
         self.posy = location[1]
+        self.prevx = 12
+        self.prevy = 23
         self.direction = direction
         self.image = pygame.image.load(self.direction[0])
         self.rect = pygame.rect.Rect(location,(16,16))
         self.step = 0
         self.movespeed = 0
+        self.c = 0
 
 
     def draw(self,screen):
@@ -38,6 +41,7 @@ class Pacman(pygame.sprite.Sprite):
         self.direction = direction
         self.step = 0
         self.movespeed = 1
+
     def update(self,game):
         self.rect.x = self.posx
         self.rect.y = self.posy
@@ -75,15 +79,25 @@ class Pacman(pygame.sprite.Sprite):
 
         game.tilemap.set_focus(new.x,new.y)
 
-    def updatePosition(self):
+    def updatePosition(self, prolog):
         if self.direction == PACMANDIRECTION.RIGHT:
             self.posx += self.movespeed
         elif self.direction == PACMANDIRECTION.LEFT:
             self.posx -= self.movespeed
         elif self.direction == PACMANDIRECTION.UP:
             self.posy -= self.movespeed
+
         elif self.direction == PACMANDIRECTION.DOWN:
             self.posy += self.movespeed
+        if self.posx % 16 == 0 or self.posy % 16 == 0:
+            x = math.floor(self.posx / 16)
+            y = math.floor(self.posy / 16)
+            self.c += 1
+            if self.c >= 16:
+                self.prevx = x
+                self.prevy = y
+
+                prolog.movePacman(int(x)+1,int(y)+1)
 
     def getCenterX(self,cell):
         return (cell.right-cell.left)/2+cell.left
@@ -97,28 +111,71 @@ class Ghost(pygame.sprite.Sprite):
         self.direction = direction
         self.posx = location[0]
         self.posy = location[1]
+        self.prevx = 12
+        self.prevy = 12
         self.ghostdirection = GHOSTDIRECTION.UP
         self.image = pygame.image.load(self.direction[0])
         self.rect = pygame.rect.Rect(location,(16,16))
         self.step = 0
         self.movespeed = 1
+        self.c = 0
 
 
     def draw(self,screen):
         screen.blit(self.image,self.rect)
 
-    def updatePosition(self):
+    def updatePosition(self, prolog, pacman):
         if self.ghostdirection == GHOSTDIRECTION.RIGHT:
-             self.posx += self.movespeed
+            self.posx += self.movespeed
         elif self.ghostdirection == GHOSTDIRECTION.LEFT:
-             self.posx -= self.movespeed
+            self.posx -= self.movespeed
         elif self.ghostdirection == GHOSTDIRECTION.UP:
-             self.posy -= self.movespeed
+            self.posy -= self.movespeed
+
         elif self.ghostdirection == GHOSTDIRECTION.DOWN:
-             self.posy += self.movespeed
+            self.posy += self.movespeed
+        if self.posx % 16 == 0 or self.posy % 16 == 0:
+            x = math.floor(self.posx / 16)
+            y = math.floor(self.posy / 16)
+            self.c += 1
+            if self.c >= 16:
+                self.prevx = x
+                self.prevy = y
+                direction = 0
+                if self.direction == GHOSTSPRITE.RED or self.direction == GHOSTSPRITE.ORANGE:
+                    direction = prolog.moveGhost(int(x)+1, int(y)+1, self.direction)
+                else:
+                    if self.direction == GHOSTSPRITE.LIGHTBLUE:
+                        y = int(math.floor(pacman.rect.centery / 16)) + 1
+                        x = int(math.floor(pacman.rect.centerx / 16)) + 1
+                        if y-4 > 0 and y+4 < 32 and x > 0 and x < 29:
+                            if pacman.direction == PACMANDIRECTION.UP:
+                                direction = prolog.moveGhost(x, y-4, self.direction)
+                            elif pacman.direction == PACMANDIRECTION.DOWN:
+                                direction = prolog.moveGhost(x, y+4, self.direction)
+                            elif pacman.direction == PACMANDIRECTION.RIGHT:
+                                direction = prolog.moveGhost(x+4, y, self.direction)
+                            elif pacman.direction == PACMANDIRECTION.LEFT:
+                                direction = prolog.moveGhost(x-4, y, self.direction)
+                        else:
+                            if pacman.direction == PACMANDIRECTION.UP:
+                                direction = prolog.moveGhost(x, 2, self.direction)
+                            elif pacman.direction == PACMANDIRECTION.DOWN:
+                                direction = prolog.moveGhost(x, 30, self.direction)
+                            elif pacman.direction == PACMANDIRECTION.RIGHT:
+                                direction = prolog.moveGhost(2, y, self.direction)
+                            elif pacman.direction == PACMANDIRECTION.LEFT:
+                                direction = prolog.moveGhost(27, y, self.direction)
+                print direction
+                self.updateDirection(direction)
+                self.c = 0
 
     def updateDirection(self,direction):
+        p = self.ghostdirection
         self.ghostdirection = direction
+        if direction != p:
+            self.movespeed = 1
+
 
     def update(self,game):
         if self.mode == GHOSTMODE.CHASE:
@@ -129,11 +186,8 @@ class Ghost(pygame.sprite.Sprite):
                 self.step = 0
             self.image = pygame.image.load(self.direction[self.step])
             if(self.rect.colliderect(game.pacman.rect)):
-                print "pacman die"
                 game.pacman.kill()
-                game.evManager.Post(PacmanDieEvent())
-                game.pacman.rect.x = 0
-                game.pacman.rect.y = 0
+                print "die"
 
         elif self.mode == GHOSTMODE.SCARE:
             self.rect.x = self.posx
@@ -143,18 +197,9 @@ class Ghost(pygame.sprite.Sprite):
                 self.step = 0
             self.image = pygame.image.load(self.direction[self.step])
             if (self.rect.colliderect(game.pacman.rect)):
-                if(self.direction == GHOSTSPRITE.RED):
-                    game.redghostDie()
-                    print "red ghost die"
                 self.kill()
                 print "eat ghost"
         new = self.rect
-        for intersection in game.tilemap.layers['intersection'].collide(new,'intersection'):
-            blockers = intersection['intersection']
-            print "ghost in intersect"
-            #intersection handle in here
-            #use intersection as a object (like wall)
-
         for cell in game.tilemap.layers['wall'].collide(new, 'wall'):
             blockers = cell['wall']
             if(blockers == ""):
