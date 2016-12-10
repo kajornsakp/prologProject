@@ -77,16 +77,20 @@ class Pacman(pygame.sprite.Sprite):
                     self.movespeed = 0
         if (new.centerx > 440 and self.direction == PACMANDIRECTION.RIGHT):
             self.posx = 8
+            game.count = 8
         elif (new.centerx < 8 and self.direction == PACMANDIRECTION.LEFT):
             self.posx = 440
+            game.count = 8
 
         game.tilemap.set_focus(new.x,new.y)
 
     def updatePosition(self, prolog):
         if self.direction == PACMANDIRECTION.RIGHT:
             self.posx += self.movespeed
+
         elif self.direction == PACMANDIRECTION.LEFT:
             self.posx -= self.movespeed
+
         elif self.direction == PACMANDIRECTION.UP:
             self.posy -= self.movespeed
 

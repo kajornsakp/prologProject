@@ -32,7 +32,6 @@ class GraphicalView(object):
         self.clock = None
         self.smallfont = None
         self.direction = PACMANDIRECTION.LEFT
-        self.screenMode = SCREENMODE.MENU
         self.movespeed = 1
         self.prolog = PrologController()
         self.life = 3
