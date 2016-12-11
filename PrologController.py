@@ -51,8 +51,8 @@ class PrologController:
         # print "current: " + str(curr)
         return self.getDirection(curr[0]['X'], curr[0]['Y'], prev[0]['X'], prev[0]['Y'])
 
-    def movePinkGhost(self, x, y):
-        p = "movePinkGhost(" + str(x) + "," + str(y) + ")"
+    def movePinkGhost(self, px, py, rx, ry):
+        p = "movePinkGhost(" + str(px) + "," + str(py) + "," + str(rx) + "," + str(ry) + ")"
         ghost = list(self.p.query(p))
         prev = list(self.p.query('ghostPrev(X,Y,pink)'))
         curr = list(self.p.query('ghost(X,Y,pink,W)'))

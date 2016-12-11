@@ -46,6 +46,8 @@ class GraphicalView(object):
         self.moveable = True
         self.screenPage = 0
         self.score = 0
+        self.sec = 0
+        self.beast = 99999
 
 
     def initPacman(self):
@@ -108,6 +110,7 @@ class GraphicalView(object):
             pygame.quit()
         elif isinstance(event,ChangeModeEvent):
             self.changeMode(event)
+            self.beast = self.sec + 20
         elif isinstance(event,PacmanDieEvent):
             self.pacmanDie()
         elif isinstance(event, TickEvent):
@@ -123,18 +126,29 @@ class GraphicalView(object):
                         self.direction = self.futureDirection
                     self.pacman.updateDirection(self.direction)
                     self.count = 0
+                    self.sec += 1
+                if(self.sec == 5):
+                    self.updateGhostMode('chase')
+                if(self.sec == 25):
+                    self.updateGhostMode('scatter')
+                if(self.sec >= 30):
+                    self.updateGhostMode('chase')
+                if(self.sec == self.beast):
+                    self.changeMode(ChangeModeEvent(GHOSTMODE.CHASE))
                 self.pacman.updatePosition(self.prolog)
-                self.updateGhostPosition(self.prolog, self.pacman)
+                self.updateGhostPosition(self.prolog)
             self.renderall()
             self.clock.tick(60)
 
-    def changeMode(self,event):
+    def changeMode(self, event):
         if event.mode == GHOSTMODE.CHASE:
             self.pacman.mode = GHOSTMODE.CHASE
             self.redghost.mode = GHOSTMODE.CHASE
             self.blueghost.mode = GHOSTMODE.CHASE
             self.pinkghost.mode = GHOSTMODE.CHASE
             self.orangeghost.mode = GHOSTMODE.CHASE
+            list(self.prolog.p.query('changeAllGhostsMode(chase)'))
+            list(self.prolog.p.query('changePacmanMode(normal)'))
         elif event.mode == GHOSTMODE.SCARE:
             self.pacman.mode = GHOSTMODE.SCARE
             self.redghost.mode = GHOSTMODE.SCARE
@@ -178,8 +192,8 @@ class GraphicalView(object):
         pygame.display.flip()
 
     def drawScore(self):
-        print self.score
-        myfont = pygame.font.Font('/Users/kajornsak/PycharmProjects/prologProject/font/game_over.ttf', 40)
+        # print self.score
+        myfont = pygame.font.Font('font/game_over.ttf', 40)
         textsurface = myfont.render('SCORE : {0}'.format(self.score), False, (255, 255, 255))
         self.screen.blit(textsurface, (SCREENSIZE[0]/2-20,SCREENSIZE[1]-30))
 
@@ -251,13 +265,18 @@ class GraphicalView(object):
     def createWater(self):
         Water((self.blueghost.posx, self.blueghost.posy), self.biscuitSprite)
 
-    def updateGhostPosition(self, prolog,pacman):
+    def updateGhostPosition(self, prolog):
 
         self.redghost.updatePosition(prolog, self)
-        # self.blueghost.updatePosition(prolog, self)
+        self.blueghost.updatePosition(prolog, self)
         self.pinkghost.updatePosition(prolog, self)
-        # self.orangeghost.updatePosition(prolog, self)
+        self.orangeghost.updatePosition(prolog, self)
 
+    def updateGhostMode(self, mode):
+        self.redghost.changeMode(mode,self.prolog)
+        self.blueghost.changeMode(mode, self.prolog)
+        self.pinkghost.changeMode(mode, self.prolog)
+        self.orangeghost.changeMode(mode, self.prolog)
 
     def pacmanDie(self):
         image = pygame.image.load(GAMEOVERSPRITE)

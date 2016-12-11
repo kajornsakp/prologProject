@@ -52,13 +52,13 @@ powerBall(2,4).
 powerBall(27,4).
 powerBall(2,14).
 powerBall(27,14).
-ghost(14,12,red,chase).
+ghost(14,12,red,scatter).
 ghostPrev(14,13,red).
-ghost(14,12,pink,chase).
+ghost(14,12,pink,scatter).
 ghostPrev(14,13,pink).
-ghost(14,12,blue,chase).
+ghost(14,12,blue,scatter).
 ghostPrev(14,13,blue).
-ghost(14,12,orange,chase).
+ghost(14,12,orange,scatter).
 ghostPrev(14,13,orange).
 
 
@@ -188,8 +188,8 @@ moveRedGhost(X,Y):- moveGhost(red,(X,Y)).
 moveBlueGhost(X,Y):-
   moveGhost(blue,(X,Y)).
 
-movePinkGhost(X,Y):-
-  moveGhost(pink,(X,Y)).
+movePinkGhost(X,Y,Rx,Ry):-
+  moveGhost(pink,[(X,Y),(Rx,Ry)]).
 
 moveOrangeGhost:-
   moveGhost(orange,G).
@@ -212,19 +212,29 @@ moveGhost(Type,Goal):-
 
 %blue and pink ghost
 moveGhost(Type,Goal):-
-  Type == blue
+  Type == blue,
   ghost(X,Y, blue, chase),
   targetGhost((X,Y),(NewX,NewY),Goal,Type),!,
   moveGhost(NewX,NewY,Type,chase).
+
+moveGhost(Type,[(Px,Py),(X1,Y1)]):-
+  Type == pink,
+  GoalX is Px + (X1 - Px),
+  GoalY is Py + (Y1 - Py),
+  %write("rx:"),write(X1), write(" |  ry:"), write(Y1),nl,
+  %write("px:"),write(Px), write(" |  py:"), write(Py),nl,
+  %write("x:"),write(GoalX), write(" |  y:"), write(GoalY),nl,
+  getPinkGoal((Px,Py),GoalX, GoalY,Goal),
+  ghost(X,Y, pink, chase),
+  targetGhost((X,Y),(NewX,NewY),Goal,Type),!,
+  moveGhost(NewX,NewY,Type,chase).
+
 
 moveGhost(Type,(Px,Py)):-
   Type == pink,
   ghost(X1,Y1,red,_),
   GoalX is Px + (X1 - Px),
   GoalY is Py + (Y1 - Py),
-  write("rx:"),write(X1), write(" |  ry:"), write(Y1),nl,
-  write("px:"),write(Px), write(" |  py:"), write(Py),nl,
-  write("x:"),write(GoalX), write(" |  y:"), write(GoalY),nl,
   getPinkGoal((Px,Py),GoalX, GoalY,Goal),
   ghost(X,Y, pink, chase),
   targetGhost((X,Y),(NewX,NewY),Goal,Type),!,

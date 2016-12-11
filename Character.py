@@ -209,6 +209,8 @@ class Ghost(pygame.sprite.Sprite):
                     direction = 0
                     if self.direction == GHOSTSPRITE.LIGHTBLUE:
                         direction = self.getBlueDirection(x, y, game.pacman, prolog)
+                    elif self.direction == GHOSTSPRITE.PINK:
+                        direction = self.getPinkDirection(x, y, game.redghost, prolog)
                     else:
                         direction = prolog.moveGhost(x, y, self.direction)
                     # print direction
@@ -245,18 +247,10 @@ class Ghost(pygame.sprite.Sprite):
         rx = int(math.floor(redghost.rect.centerx / 16)) + 1
         newx = px + (rx - px)
         newy = py + (ry - py)
-        if newx < 1 and newy > 1 and newy < 31:
-            return prolog.moveGhost(2, newy, self.direction)
-        elif newx > 28 and newy > 1 and newy < 31:
-            return prolog.moveGhost(28, newy, self.direction)
-        elif newy < 1 and newx > 1 and newx < 28:
-            return prolog.moveGhost(newx, 2, self.direction)
-        elif newy > 31 and newx > 1 and newx < 28:
-            return prolog.moveGhost(newx, 30, self.direction)
-        elif newy > 1 and newy < 31  and newx > 1 and newx < 28:
-            return prolog.moveGhost(newx, newy, self.direction)
-        else:
-            return prolog.moveGhost(px, py, self.direction)
+        # print "p:" +str(px) + "," + str(py)
+        # print "r:" + str(rx) + "," + str(ry)
+        # print "n:" + str(newx) + "," + str(newy)
+        return prolog.movePinkGhost(px, py, rx, ry)
 
 
     def changeMode(self, mode, prolog):
@@ -331,7 +325,6 @@ class Ghost(pygame.sprite.Sprite):
                     game.orangeghostDie()
                 print "eat ghost"
         new = self.rect
-        c = 0
 
 
         for cell in game.tilemap.layers['wall'].collide(new, 'wall'):
