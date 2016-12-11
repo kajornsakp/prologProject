@@ -302,7 +302,7 @@ class Ghost(pygame.sprite.Sprite):
                 self.step = 0
             self.image = pygame.image.load(self.direction[self.step])
             if(self.rect.colliderect(game.pacman.rect)):
-                game.pacman.kill()
+                game.pacman.isDead = True
                 game.evManager.Post(PacmanDieEvent())
                 game.pacman.kill()
                 print "die"
