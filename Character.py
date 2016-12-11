@@ -372,6 +372,7 @@ class Biscuit(pygame.sprite.Sprite):
     def update(self,game):
         if self.rect.colliderect(game.pacman.rect):
             game.score += 1
+            game.biscuitamount -= 1
             self.kill()
 
 class Powerball(pygame.sprite.Sprite):

@@ -89,6 +89,7 @@ BLINDSPRITE = "sprite/blind-mask.png"
 TRAPSPRITE = "sprite/trap.png"
 SCREENSPRITE = ["sprite/screen-1.gif","sprite/screen-2.gif","sprite/screen-3.gif"]
 GAMEOVERSPRITE = "sprite/screen-gameover.gif"
+GAMEWINSPRITE = "sprite/screen-gamewin.gif"
 FN = enum(LASER=0,TRAP=1)
 GHOSTMODE = enum(SCARE=0,CHASE=1)
 GHOSTDIRECTION = enum(UP=0,DOWN=1,LEFT=2,RIGHT=3)

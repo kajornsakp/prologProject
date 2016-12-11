@@ -48,6 +48,8 @@ class GraphicalView(object):
         self.score = 0
         self.sec = 0
         self.beast = 99999
+        self.biscuitamount = 285
+        self.isWin = False
 
 
     def initPacman(self):
@@ -181,21 +183,35 @@ class GraphicalView(object):
             self.screen.blit(image, rect)
             pygame.display.flip()
             return
+        if (self.isWin):
+            self.gameWin()
+            return
         if self.pacman.isDead:
             self.pacmanDie()
+            return
         else:
             self.tilemap.update(self)
             self.tilemap.draw(self.screen)
             self.drawScore()
 
 
+
         pygame.display.flip()
 
     def drawScore(self):
         # print self.score
+        if(self.biscuitamount == 0):
+            self.isWin = True
         myfont = pygame.font.Font('font/game_over.ttf', 40)
         textsurface = myfont.render('SCORE : {0}'.format(self.score), False, (255, 255, 255))
         self.screen.blit(textsurface, (SCREENSIZE[0]/2-20,SCREENSIZE[1]-30))
+
+    def gameWin(self):
+        image = pygame.image.load(GAMEWINSPRITE)
+        rect = image.get_rect()
+        self.screen.blit(image, rect)
+        pygame.display.flip()
+
 
     def clearScreen(self):
         self.screen.fill((0, 0, 0))
@@ -256,6 +272,7 @@ class GraphicalView(object):
     def orangeghostDie(self):
         self.blindPacman()
 
+
     def fireLaser(self,posx,posy):
         a = Laser((posx, posy), LASERSPRITE.LEFT, self.biscuitSprite)
         b = Laser((posx, posy), LASERSPRITE.RIGHT, self.biscuitSprite)
@@ -283,6 +300,7 @@ class GraphicalView(object):
         rect = image.get_rect()
         self.screen.blit(image,rect)
         pygame.display.flip()
+
 
     def blindPacman(self):
         if(self.isBlind):
