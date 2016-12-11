@@ -447,10 +447,11 @@ class Blind(pygame.sprite.Sprite):
         self.rect = pygame.rect.Rect(location,(1500,1500))
 
     def update(self,game):
-        self.rect.x = game.pacman.posx-self.rect.width/2
-        self.rect.y = game.pacman.posy-self.rect.height/2
-        print self.rect.x,self.rect.y
-        game.tilemap.set_focus(self.rect.x, self.rect.y)
+        if(game.isBlind):
+            self.rect.x = game.pacman.posx - self.rect.width / 2
+            self.rect.y = game.pacman.posy - self.rect.height / 2
+            print self.rect.x, self.rect.y
+            game.tilemap.set_focus(self.rect.x, self.rect.y)
 
 
 class Trap(pygame.sprite.Sprite):
