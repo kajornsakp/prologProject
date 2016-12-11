@@ -133,7 +133,7 @@ class GraphicalView(object):
                     self.updateGhostMode('scatter')
                 if(self.sec >= 30):
                     self.updateGhostMode('chase')
-                if(self.sec == self.beast):
+                if(self.sec == 9999):
                     self.changeMode(ChangeModeEvent(GHOSTMODE.CHASE))
                 self.pacman.updatePosition(self.prolog)
                 self.updateGhostPosition(self.prolog)

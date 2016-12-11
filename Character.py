@@ -44,6 +44,7 @@ class Pacman(pygame.sprite.Sprite):
 
 
 
+
     def draw(self,screen):
         screen.blit(self.image,self.rect)
 
@@ -302,7 +303,8 @@ class Ghost(pygame.sprite.Sprite):
             self.image = pygame.image.load(self.direction[self.step])
             if(self.rect.colliderect(game.pacman.rect)):
                 game.pacman.kill()
-                Laser
+                game.evManager.Post(PacmanDieEvent())
+                game.pacman.kill()
                 print "die"
 
         elif self.mode == GHOSTMODE.SCARE:
@@ -456,11 +458,19 @@ class Trap(pygame.sprite.Sprite):
         super(Trap,self).__init__(*group)
         self.image = pygame.image.load(TRAPSPRITE)
         self.rect = pygame.rect.Rect(location,(16,16))
+        self.collide = True
+        self.sec =0
 
     def update(self,game):
         if(self.rect.colliderect(game.pacman.rect)):
-            if(game.pacman.isTrap == True):
+            game.pacman.isTrap = True
+            if(game.pacman.isTrap == True  and self.collide):
+                self.collide = False
                 game.pacman.vely = 0
                 game.pacman.velx = 0
+                self.sec = game.sec + 3
             else:
-                game.pacman.checkDirection()
+                if(self.sec == game.sec):
+                    game.pacman.checkDirection()
+                    self.collide == True
+
