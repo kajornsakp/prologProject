@@ -302,8 +302,7 @@ class Ghost(pygame.sprite.Sprite):
             self.image = pygame.image.load(self.direction[self.step])
             if(self.rect.colliderect(game.pacman.rect)):
                 game.pacman.kill()
-                game.pacman.isDead = True
-                game.evManager.Post(PacmanDieEvent())
+                Laser
                 print "die"
 
         elif self.mode == GHOSTMODE.SCARE:
@@ -414,7 +413,8 @@ class Laser(pygame.sprite.Sprite):
         if(self.step == 3):
             self.step = 2
         if self.rect.colliderect(game.pacman.rect):
-            print "headshot"
+            game.pacman.isDead = True
+            game.evManager.Post(PacmanDieEvent())
             game.pacman.kill()
             self.kill()
 
