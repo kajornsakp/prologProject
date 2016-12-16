@@ -9,6 +9,7 @@ This project is belong to Artificial Intelligent course by using Python and Prol
 	- trap
 	- sticky trap
 	- blind
+
 ###Requirements
 - Python (2.7.12)
 - SWI-Prolog (7.3.32-devel)
